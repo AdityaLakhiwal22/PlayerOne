@@ -15,4 +15,5 @@ urlpatterns = [
     path('profile/<str:username>/', views.player_profile, name='player_profile'),
     path('notifications/', views.notifications, name='notifications'),
     path('notifications/read/<int:pk>/', views.mark_read, name='mark_read'),
+    path('rate/<str:username>/<int:post_pk>/', views.rate_player, name='rate_player'),
 ]

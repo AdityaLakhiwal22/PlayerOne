@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% block title %}Rate {{ rated_user.username }} — Player One{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-5">
+        <div class="card p-4 text-center">
+            <h3 style="color:#00ff87;">⭐ Rate Player</h3>
+            <p style="color:#aaa;" class="mt-2">
+                How was your experience playing with<br>
+                <strong style="color:#fff;">{{ rated_user.username }}</strong>
+                in <strong style="color:#fff;">{{ post.title }}</strong>?
+            </p>
+
+            <form method="post" class="mt-3">
+                {% csrf_token %}
+                <div class="mb-4">
+                    <div class="d-flex justify-content-center gap-2 fs-2" id="stars">
+                        {% for i in "12345" %}
+                        <span class="star" data-value="{{ i }}" style="cursor:pointer;opacity:0.4;">⭐</span>
+                        {% endfor %}
+                    </div>
+                    <input type="hidden" name="score" id="score-input" value="5">
+                </div>
+                <div class="mb-3 text-start">
+                    <label class="form-label">Comment (optional)</label>
+                    <input type="text" name="comment" class="form-control" placeholder="Great teammate, very punctual...">
+                </div>
+                <button type="submit" class="btn btn-p1 w-100">Submit Rating 🚀</button>
+                <a href="{% url 'post_detail' post.pk %}" class="btn btn-outline-secondary w-100 mt-2">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+const stars = document.querySelectorAll('.star');
+let selected = 5;
+
+// Highlight all by default
+stars.forEach(s => s.style.opacity = '1');
+
+stars.forEach(star => {
+    star.addEventListener('click', () => {
+        selected = parseInt(star.dataset.value);
+        document.getElementById('score-input').value = selected;
+        stars.forEach(s => {
+            s.style.opacity = parseInt(s.dataset.value) <= selected ? '1' : '0.3';
+        });
+    });
+    star.addEventListener('mouseover', () => {
+        const val = parseInt(star.dataset.value);
+        stars.forEach(s => {
+            s.style.opacity = parseInt(s.dataset.value) <= val ? '1' : '0.3';
+        });
+    });
+    star.addEventListener('mouseout', () => {
+        stars.forEach(s => {
+            s.style.opacity = parseInt(s.dataset.value) <= selected ? '1' : '0.3';
+        });
+    });
+});
+</script>
+{% endblock %}

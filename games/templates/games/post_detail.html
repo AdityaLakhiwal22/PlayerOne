@@ -94,7 +94,7 @@
         </div>
 
         <!-- Comments -->
-        <div class="card p-4">
+        <div class="card p-4 mb-4">
             <h5 style="color:#00ff87;">💬 Comments ({{ post.comments.count }})</h5>
             <hr style="border-color:#2a2a4a;">
 
@@ -118,6 +118,35 @@
             </form>
             {% endif %}
         </div>
+
+        <!-- Rate Players -->
+        {% if user.is_authenticated %}
+        <div class="card p-3 mb-4">
+            <h6 style="color:#00ff87;">⭐ Rate Players</h6>
+            <hr style="border-color:#2a2a4a;">
+
+            {% for jr in post.join_requests.all %}
+            {% if jr.player == user and jr.status == 'accepted' %}
+            <div class="d-flex justify-content-between align-items-center mt-2">
+                <a href="{% url 'player_profile' post.posted_by.username %}" style="color:#fff;text-decoration:none;">{{ post.posted_by.username }} (organizer)</a>
+                <a href="{% url 'rate_player' post.posted_by.username post.pk %}" class="btn btn-outline-warning btn-sm">⭐ Rate</a>
+            </div>
+            {% endif %}
+            {% endfor %}
+
+            {% if user == post.posted_by %}
+            {% for jr in post.join_requests.all %}
+            {% if jr.status == 'accepted' %}
+            <div class="d-flex justify-content-between align-items-center mt-2">
+                <a href="{% url 'player_profile' jr.player.username %}" style="color:#fff;text-decoration:none;">{{ jr.player.username }}</a>
+                <a href="{% url 'rate_player' jr.player.username post.pk %}" class="btn btn-outline-warning btn-sm">⭐ Rate</a>
+            </div>
+            {% endif %}
+            {% endfor %}
+            {% endif %}
+        </div>
+        {% endif %}
+
     </div>
 
     <!-- Sidebar -->
@@ -146,14 +175,13 @@
         </div>
         {% endif %}
 
-        <!-- Post owner sees join requests -->
         {% if join_requests %}
         <div class="card p-4">
             <h5 style="color:#00ff87;">📥 Join Requests ({{ join_requests.count }})</h5>
             <hr style="border-color:#2a2a4a;">
             {% for jr in join_requests %}
             <div class="mb-3 p-2" style="background:#0d0d0d; border-radius:8px;">
-                <strong style="color:#fff;">{{ jr.player.username }}</strong>
+                <a href="{% url 'player_profile' jr.player.username %}" style="color:#fff;text-decoration:none;font-weight:bold;">{{ jr.player.username }}</a>
                 <span class="badge
                     {% if jr.status == 'accepted' %}bg-success
                     {% elif jr.status == 'rejected' %}bg-danger

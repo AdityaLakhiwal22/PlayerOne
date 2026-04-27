@@ -6,7 +6,7 @@ from django.db.models import Q
 from django.contrib.auth.models import User
 from .models import GamePost, JoinRequest, Comment, PlayerProfile
 from .forms import GamePostForm, JoinRequestForm, CommentForm, RegisterForm, PlayerProfileForm
-from .models import GamePost, JoinRequest, Comment, PlayerProfile, Notification
+from .models import GamePost, JoinRequest, Comment, PlayerProfile, Notification, Reputation
 
 
 def home(request):
@@ -245,3 +245,50 @@ def mark_read(request, pk):
     notif.is_read = True
     notif.save()
     return redirect(notif.link or 'home')
+
+@login_required
+def rate_player(request, username, post_pk):
+    rated_user = get_object_or_404(User, username=username)
+    post = get_object_or_404(GamePost, pk=post_pk)
+
+    # Can't rate yourself
+    if rated_user == request.user:
+        messages.error(request, "You can't rate yourself!")
+        return redirect('post_detail', pk=post_pk)
+
+    # Check already rated
+    already_rated = Reputation.objects.filter(
+        given_by=request.user, given_to=rated_user, game_post=post
+    ).exists()
+    if already_rated:
+        messages.error(request, "You already rated this player for this game.")
+        return redirect('post_detail', pk=post_pk)
+
+    if request.method == 'POST':
+        score = int(request.POST.get('score', 5))
+        comment = request.POST.get('comment', '')
+        Reputation.objects.create(
+            given_by=request.user,
+            given_to=rated_user,
+            game_post=post,
+            score=score,
+            comment=comment
+        )
+        # Update total reputation on profile
+        profile, _ = PlayerProfile.objects.get_or_create(user=rated_user)
+        profile.reputation = rated_user.received_reputations.count()
+        profile.save()
+
+        # Notify rated player
+        Notification.objects.create(
+            user=rated_user,
+            message=f"{request.user.username} gave you {score}⭐ for '{post.title}'!",
+            link=f"/profile/{rated_user.username}/"
+        )
+        messages.success(request, f"You rated {rated_user.username} {score}⭐!")
+        return redirect('post_detail', pk=post_pk)
+
+    return render(request, 'games/rate_player.html', {
+        'rated_user': rated_user,
+        'post': post,
+    })

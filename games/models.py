@@ -146,3 +146,17 @@ class Notification(models.Model):
 
     def __str__(self):
         return f"Notif for {self.user.username}: {self.message}"
+    
+class Reputation(models.Model):
+    given_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='given_reputations')
+    given_to = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_reputations')
+    game_post = models.ForeignKey(GamePost, on_delete=models.CASCADE, related_name='reputations')
+    score = models.IntegerField(choices=[(1,'⭐'),(2,'⭐⭐'),(3,'⭐⭐⭐'),(4,'⭐⭐⭐⭐'),(5,'⭐⭐⭐⭐⭐')])
+    comment = models.CharField(max_length=200, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('given_by', 'given_to', 'game_post')  # Can only rate once per game
+
+    def __str__(self):
+        return f"{self.given_by.username} → {self.given_to.username} ({self.score}⭐)"
