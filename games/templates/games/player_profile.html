@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% block title %}{{ profile_user.username }} — Player One{% endblock %}
+
+{% block content %}
+<div class="row">
+
+    <!-- Left: Profile Info -->
+    <div class="col-md-4 mb-4">
+        <div class="card p-4 text-center">
+            {% if profile.avatar %}
+            <img src="{{ profile.avatar.url }}" class="rounded-circle mb-3" style="width:100px;height:100px;object-fit:cover;border:3px solid #00ff87;">
+            {% else %}
+            <div class="rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center"
+                style="width:100px;height:100px;background:#1a1a2e;border:3px solid #00ff87;font-size:2.5rem;">
+                👤
+            </div>
+            {% endif %}
+
+            <h3 style="color:#fff;">{{ profile_user.username }}</h3>
+
+            {% if profile.city %}
+            <p style="color:#aaa;">📍 {{ profile.area }}{% if profile.area and profile.city %}, {% endif %}{{ profile.city }}</p>
+            {% endif %}
+
+            {% if profile.bio %}
+            <p style="color:#ccc;" class="mt-2">{{ profile.bio }}</p>
+            {% endif %}
+
+            <hr style="border-color:#2a2a4a;">
+
+            <div class="row g-2 text-center">
+                <div class="col-4">
+                    <p style="color:#00ff87;font-size:1.5rem;font-weight:800;" class="mb-0">{{ posts.count }}</p>
+                    <p style="color:#888;" class="small mb-0">Posts</p>
+                </div>
+                <div class="col-4">
+                    <p style="color:#00ff87;font-size:1.5rem;font-weight:800;" class="mb-0">{{ total_joins }}</p>
+                    <p style="color:#888;" class="small mb-0">Players Joined</p>
+                </div>
+                <div class="col-4">
+                    <p style="color:#00ff87;font-size:1.5rem;font-weight:800;" class="mb-0">{{ profile.reputation }}</p>
+                    <p style="color:#888;" class="small mb-0">Reputation</p>
+                </div>
+            </div>
+
+            {% if user == profile_user %}
+            <a href="{% url 'edit_profile' %}" class="btn btn-p1 w-100 mt-3">✏️ Edit Profile</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Right: Posts -->
+    <div class="col-md-8">
+        <h4 style="color:#fff;" class="mb-3">
+            {% if user == profile_user %}Your Posts{% else %}{{ profile_user.username }}'s Posts{% endif %}
+        </h4>
+
+        {% if posts %}
+        <div class="d-flex flex-column gap-3">
+            {% for post in posts %}
+            <div class="card p-3">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <span class="badge {% if post.mode == 'outdoor' %}badge-outdoor{% else %}badge-online{% endif %} me-2">
+                            {% if post.mode == 'outdoor' %}🏏 Outdoor{% else %}🎮 Online{% endif %}
+                        </span>
+                        <span class="sport-tag" style="color:#fff;">{{ post.get_sport_display }}</span>
+                    </div>
+                    <span class="badge {% if post.status == 'open' %}bg-success{% elif post.status == 'full' %}bg-warning text-dark{% else %}bg-secondary{% endif %}">
+                        {{ post.get_status_display }}
+                    </span>
+                </div>
+                <h6 style="color:#fff;" class="mt-2 mb-1">{{ post.title }}</h6>
+                <div class="d-flex justify-content-between align-items-center">
+                    <p style="color:#888;" class="small mb-0">
+                        👥 {{ post.players_have }} have · Need {{ post.spots_left }} more
+                        {% if post.city %} · 📍 {{ post.city }}{% endif %}
+                        {% if post.play_date %} · 📅 {{ post.play_date }}{% endif %}
+                    </p>
+                    <a href="{% url 'post_detail' post.pk %}" class="btn btn-p1 btn-sm">View →</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="card p-4 text-center">
+            <p style="color:#888;">No posts yet.</p>
+            {% if user == profile_user %}
+            <a href="{% url 'create_post' %}" class="btn btn-p1">➕ Post a Game</a>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock %}

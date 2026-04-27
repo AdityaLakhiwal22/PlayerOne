@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}Delete Post — Player One{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-5">
+    <div class="card p-4 text-center">
+      <div style="font-size:3rem;">🗑️</div>
+      <h3 style="color:#ff6b6b;" class="mt-2">Delete Post?</h3>
+      <p style="color:#aaa;" class="mt-2">
+        Are you sure you want to delete:<br>
+        <strong style="color:#fff;">{{ post.title }}</strong>
+      </p>
+      <p class="small" style="color:#666;">This cannot be undone.</p>
+      <div class="d-flex gap-2 justify-content-center mt-3">
+        <form method="post">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-danger px-4">Yes, Delete</button>
+        </form>
+        <a href="{% url 'post_detail' post.pk %}" class="btn btn-outline-secondary px-4">Cancel</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

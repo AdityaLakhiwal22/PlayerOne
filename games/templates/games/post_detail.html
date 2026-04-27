@@ -1,0 +1,187 @@
+{% extends 'base.html' %}
+{% block title %}{{ post.title }} — Player One{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card p-4 mb-4">
+            <div class="d-flex justify-content-between align-items-start mb-3">
+                <span class="badge {% if post.mode == 'outdoor' %}badge-outdoor{% else %}badge-online{% endif %} px-3 py-2 fs-6">
+                    {% if post.mode == 'outdoor' %}🏏 Outdoor{% else %}🎮 Online{% endif %}
+                </span>
+                <span class="sport-tag fs-6" style="color:#fff;">{{ post.get_sport_display }}</span>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-start">
+                <h2 style="color:#fff;">{{ post.title }}</h2>
+                {% if user == post.posted_by %}
+                <div class="d-flex gap-2 ms-3">
+                    <a href="{% url 'edit_post' post.pk %}" class="btn btn-outline-secondary btn-sm">✏️ Edit</a>
+                    {% if post.status == 'open' or post.status == 'full' %}
+                    <a href="{% url 'toggle_post' post.pk %}" class="btn btn-outline-warning btn-sm">🔒 Close</a>
+                    {% else %}
+                    <a href="{% url 'toggle_post' post.pk %}" class="btn btn-outline-success btn-sm">🔓 Reopen</a>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+            <p style="color:#aaa;">Posted by <a href="{% url 'player_profile' post.posted_by.username %}" style="color:#00ff87;text-decoration:none;">{{ post.posted_by.username }}</a> · {{ post.created_at|timesince }} ago</p>
+
+            {% if post.description %}
+            <p>{{ post.description }}</p>
+            {% endif %}
+
+            <hr style="border-color:#2a2a4a;">
+
+            <div class="row g-3">
+                <div class="col-6">
+                    <p class="mb-1 small" style="color:#888;">Players Have</p>
+                    <p class="fw-bold" style="color:#fff;">👥 {{ post.players_have }}</p>
+                </div>
+                <div class="col-6">
+                    <p class="mb-1 small" style="color:#888;">Still Need</p>
+                    <p class="fw-bold" style="color:#00ff87;">
+                        {% if post.is_full %}✅ Full!{% else %}{{ post.spots_left }} more{% endif %}
+                    </p>
+                </div>
+                <div class="col-6">
+                    <p class="mb-1 small" style="color:#888;">Skill Level</p>
+                    <p class="fw-bold" style="color:#fff;">🎯 {{ post.get_skill_level_display }}</p>
+                </div>
+                <div class="col-6">
+                    <p class="mb-1 small" style="color:#888;">Status</p>
+                    <p class="fw-bold" style="color:#fff;">
+                        {% if post.status == 'open' %}<span style="color:#00ff87;">🟢 Open</span>
+                        {% elif post.status == 'full' %}<span style="color:#ffcc00;">🟡 Full</span>
+                        {% else %}<span style="color:#ff6b6b;">🔴 Closed</span>{% endif %}
+                    </p>
+                </div>
+
+                {% if post.mode == 'outdoor' %}
+                {% if post.location %}
+                <div class="col-12">
+                    <p class="mb-1 small" style="color:#888;">📍 Location</p>
+                    <p class="fw-bold" style="color:#fff;">{{ post.location }}{% if post.city %}, {{ post.city }}{% endif %}</p>
+                </div>
+                {% endif %}
+                {% if post.play_date %}
+                <div class="col-6">
+                    <p class="mb-1 small" style="color:#888;">📅 Date</p>
+                    <p class="fw-bold" style="color:#fff;">{{ post.play_date }}</p>
+                </div>
+                {% endif %}
+                {% if post.play_time %}
+                <div class="col-6">
+                    <p class="mb-1 small" style="color:#888;">⏰ Time</p>
+                    <p class="fw-bold" style="color:#fff;">{{ post.play_time }}</p>
+                </div>
+                {% endif %}
+                {% else %}
+                {% if post.game_platform %}
+                <div class="col-6">
+                    <p class="mb-1 small" style="color:#888;">🖥️ Platform</p>
+                    <p class="fw-bold" style="color:#fff;">{{ post.game_platform }}</p>
+                </div>
+                {% endif %}
+                {% if post.game_id %}
+                <div class="col-6">
+                    <p class="mb-1 small" style="color:#888;">🎮 Game ID</p>
+                    <p class="fw-bold" style="color:#fff;">{{ post.game_id }}</p>
+                </div>
+                {% endif %}
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Comments -->
+        <div class="card p-4">
+            <h5 style="color:#00ff87;">💬 Comments ({{ post.comments.count }})</h5>
+            <hr style="border-color:#2a2a4a;">
+
+            {% for comment in post.comments.all %}
+            <div class="mb-3">
+                <strong style="color:#00ff87;">{{ comment.author.username }}</strong>
+                <span class="text-muted small ms-2">{{ comment.created_at|timesince }} ago</span>
+                <p class="mb-0 mt-1">{{ comment.text }}</p>
+            </div>
+            {% empty %}
+            <p style="color:#fff;">No comments yet. Be the first!</p>
+            {% endfor %}
+
+            {% if user.is_authenticated %}
+            <form method="post" class="mt-3">
+                {% csrf_token %}
+                <div class="input-group">
+                    {{ comment_form.text }}
+                    <button type="submit" name="comment" class="btn btn-p1">Post</button>
+                </div>
+            </form>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="col-lg-4">
+        {% if user.is_authenticated and user != post.posted_by and post.status == 'open' %}
+        <div class="card p-4 mb-4">
+            <h5 style="color:#00ff87;">🙋 Want to Join?</h5>
+
+            {% if user_request %}
+            <div class="alert
+                {% if user_request.status == 'accepted' %}alert-success
+                {% elif user_request.status == 'rejected' %}alert-danger
+                {% else %}alert-warning{% endif %}">
+                Your request is <strong>{{ user_request.get_status_display }}</strong>
+            </div>
+            {% else %}
+            <form method="post">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label class="form-label">Message (optional)</label>
+                    {{ join_form.message }}
+                </div>
+                <button type="submit" name="join" class="btn btn-p1 w-100">Send Join Request 🚀</button>
+            </form>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <!-- Post owner sees join requests -->
+        {% if join_requests %}
+        <div class="card p-4">
+            <h5 style="color:#00ff87;">📥 Join Requests ({{ join_requests.count }})</h5>
+            <hr style="border-color:#2a2a4a;">
+            {% for jr in join_requests %}
+            <div class="mb-3 p-2" style="background:#0d0d0d; border-radius:8px;">
+                <strong style="color:#fff;">{{ jr.player.username }}</strong>
+                <span class="badge
+                    {% if jr.status == 'accepted' %}bg-success
+                    {% elif jr.status == 'rejected' %}bg-danger
+                    {% else %}bg-warning text-dark{% endif %} ms-2">
+                    {{ jr.get_status_display }}
+                </span>
+                {% if jr.message %}
+                <p class="small text-muted mt-1 mb-2">{{ jr.message }}</p>
+                {% endif %}
+                {% if jr.status == 'pending' %}
+                <div class="d-flex gap-2">
+                    <a href="{% url 'manage_request' jr.pk 'accept' %}" class="btn btn-success btn-sm">✅ Accept</a>
+                    <a href="{% url 'manage_request' jr.pk 'reject' %}" class="btn btn-danger btn-sm">❌ Reject</a>
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% if not user.is_authenticated %}
+        <div class="card p-4">
+            <p class="text-muted text-center">Login to join this game!</p>
+            <a href="{% url 'login' %}" class="btn btn-p1 w-100">🔑 Login</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<a href="{% url 'home' %}" class="btn btn-outline-secondary mt-3">← Back to Home</a>
+{% endblock %}

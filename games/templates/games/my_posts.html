@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block title %}My Posts — Player One{% endblock %}
+
+{% block content %}
+<h2 style="color:#00ff87;" class="mb-4">📋 My Activity</h2>
+
+<h4 class="mb-3" style="color:#fff;">Posts I Created</h4>
+{% if posts %}
+<div class="row g-3 mb-5">
+    {% for post in posts %}
+    <div class="col-md-6">
+        <div class="card p-3">
+            <div class="d-flex justify-content-between">
+                <h6 style="color:#fff;">{{ post.title }}</h6>
+                <span class="badge {% if post.status == 'open' %}bg-success{% elif post.status == 'full' %}bg-warning text-dark{% else %}bg-secondary{% endif %}">
+                    {{ post.get_status_display }}
+                </span>
+            </div>
+            <p class="text-muted small mb-2">{{ post.get_sport_display }} · {{ post.join_requests.count }} requests</p>
+            <a href="{% url 'post_detail' post.pk %}" class="btn btn-p1 btn-sm">Manage →</a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<p class="text-muted mb-5">You haven't posted anything yet. <a href="{% url 'create_post' %}" style="color:#00ff87;">Post a game!</a></p>
+{% endif %}
+
+<h4 class="mb-3" style="color:#fff;">Games I Requested to Join</h4>
+{% if joined %}
+<div class="row g-3">
+    {% for jr in joined %}
+    <div class="col-md-6">
+        <div class="card p-3">
+            <div class="d-flex justify-content-between">
+                <h6 style="color:#fff;">{{ jr.game_post.title }}</h6>
+                <span class="badge {% if jr.status == 'accepted' %}bg-success{% elif jr.status == 'rejected' %}bg-danger{% else %}bg-warning text-dark{% endif %}">
+                    {{ jr.get_status_display }}
+                </span>
+            </div>
+            <p class="text-muted small mb-2">{{ jr.game_post.get_sport_display }}</p>
+            <a href="{% url 'post_detail' jr.game_post.pk %}" class="btn btn-outline-secondary btn-sm">View Post →</a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<p class="text-muted">You haven't requested to join any game yet. <a href="{% url 'home' %}" style="color:#00ff87;">Find a game!</a></p>
+{% endif %}
+{% endblock %}

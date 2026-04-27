@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Player One{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --p1-green: #00ff87;
+            --p1-dark: #0d0d0d;
+            --p1-card: #1a1a2e;
+            --p1-accent: #16213e;
+        }
+        body {
+            background-color: var(--p1-dark);
+            color: #ffffff;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        .navbar {
+            background: linear-gradient(90deg, #0d0d0d, #1a1a2e) !important;
+            border-bottom: 2px solid var(--p1-green);
+        }
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--p1-green) !important;
+            letter-spacing: 1px;
+        }
+        .nav-link { color: #ccc !important; }
+        .nav-link:hover { color: var(--p1-green) !important; }
+        .btn-p1 {
+            background: var(--p1-green);
+            color: #000;
+            font-weight: 700;
+            border: none;
+        }
+        .btn-p1:hover { background: #00cc6a; color: #000; }
+        .card {
+            background: var(--p1-card);
+            border: 1px solid #2a2a4a;
+            border-radius: 12px;
+        }
+        .card:hover { border-color: var(--p1-green); transform: translateY(-2px); transition: 0.2s; }
+        .badge-outdoor { background: #1a472a; color: #00ff87; }
+        .badge-online  { background: #1a1a4e; color: #7b9fff; }
+        .sport-tag {
+            display: inline-block;
+            background: #2a2a4a;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+        }
+        .form-control, .form-select {
+            background: #1a1a2e;
+            border: 1px solid #2a2a4a;
+            color: #e0e0e0;
+        }
+        .form-control:focus, .form-select:focus {
+            background: #1a1a2e;
+            border-color: var(--p1-green);
+            color: #e0e0e0;
+            box-shadow: 0 0 0 0.2rem rgba(0,255,135,0.15);
+        }
+        .form-label { color: #aaa; font-size: 0.9rem; }
+        .alert { border-radius: 10px; }
+        footer { border-top: 1px solid #2a2a4a; }
+        ::placeholder {
+            color: #888 !important;
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container">
+        <a class="navbar-brand" href="/">
+            🎮 Player One
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item"><a class="nav-link" href="/">🏠 Home</a></li>
+                {% if user.is_authenticated %}
+                <li class="nav-item"><a class="nav-link" href="{% url 'create_post' %}">➕ Post a Game</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'my_posts' %}">📋 My Posts</a></li>
+                {% endif %}
+            </ul>
+            <ul class="navbar-nav">
+                {% if user.is_authenticated %}
+                <li class="nav-item">
+                    <a class="nav-link position-relative" href="{% url 'notifications' %}">
+                        🔔
+                        {% if unread_count %}
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill"
+                            style="background:#00ff87;color:#000;font-size:0.65rem;">
+                            {{ unread_count }}
+                        </span>
+                        {% endif %}
+                    </a>
+                </li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'player_profile' user.username %}">👤 {{ user.username }}</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">🚪 Logout</a></li>
+                {% else %}
+                <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">🔑 Login</a></li>
+                <li class="nav-item"><a class="nav-link btn btn-p1 ms-2 px-3" href="{% url 'register' %}">Join Now</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-4">
+    {% for message in messages %}
+    <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}success{% endif %} alert-dismissible fade show">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    {% endfor %}
+
+    {% block content %}{% endblock %}
+</div>
+
+<footer class="mt-5 py-4 text-center" style="color:#fff;">
+    <p>🎮 Player One — Find your squad, online or on the ground. Made with ❤️ in India 🇮🇳</p>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

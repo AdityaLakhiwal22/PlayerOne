@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+{% block title %}Player One — Find Players Near You{% endblock %}
+
+{% block content %}
+
+<!-- Hero -->
+<div class="text-center py-4 mb-4">
+    <h1 style="font-size:2.5rem; font-weight:900; color:#00ff87;">
+        Find Players. Anytime. Anywhere. 🏆
+    </h1>
+    <p style="color:#fff;">Cricket at the ground, BGMI ranked, football on Sunday — find your squad.</p>
+    {% if not user.is_authenticated %}
+    <a href="{% url 'register' %}" class="btn btn-p1 btn-lg px-5 mt-2">Get Started Free</a>
+    {% else %}
+    <a href="{% url 'create_post' %}" class="btn btn-p1 btn-lg px-5 mt-2">➕ Post a Game Now</a>
+    {% endif %}
+</div>
+
+<!-- Filters -->
+<div class="card p-3 mb-4">
+    <form method="get" class="row g-2 align-items-end">
+        <div class="col-md-3">
+            <label class="form-label">Search</label>
+            <input type="text" name="search" class="form-control" placeholder="Cricket, BGMI, Mumbai..." value="{{ filters.search }}">
+        </div>
+        <div class="col-md-2">
+            <label class="form-label">Mode</label>
+            <select name="mode" class="form-select">
+                <option value="">All Modes</option>
+                {% for val, label in mode_choices %}
+                <option value="{{ val }}" {% if filters.mode == val %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">Sport</label>
+            <select name="sport" class="form-select">
+                <option value="">All Sports</option>
+                {% for val, label in sport_choices %}
+                <option value="{{ val }}" {% if filters.sport == val %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label class="form-label">City</label>
+            <input type="text" name="city" class="form-control" placeholder="e.g. Mumbai" value="{{ filters.city }}">
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-p1 w-100">🔍 Filter</button>
+        </div>
+    </form>
+</div>
+
+<!-- Posts Grid -->
+{% if posts %}
+<div class="row g-3">
+    {% for post in posts %}
+    <div class="col-md-6 col-lg-4">
+        <div class="card h-100 p-3">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+                <span class="badge {% if post.mode == 'outdoor' %}badge-outdoor{% else %}badge-online{% endif %} px-2 py-1">
+                    {% if post.mode == 'outdoor' %}🏏 Outdoor{% else %}🎮 Online{% endif %}
+                </span>
+                <span class="sport-tag" style="color:#fff;">{{ post.get_sport_display }}</span>
+            </div>
+
+            <h5 class="mb-1" style="color:#fff;">{{ post.title }}</h5>
+
+            {% if post.description %}
+            <p class="text-muted small mb-2" style="color:#fff;">{{ post.description|truncatechars:80 }}</p>
+            {% endif %}
+
+            <div class="mt-auto">
+                {% if post.mode == 'outdoor' and post.location %}
+                <p class="mb-1 small" style="color:#fff;">📍 {{ post.location }}{% if post.city %}, {{ post.city }}{% endif %}</p>
+                {% endif %}
+                {% if post.play_date %}
+                <p class="mb-1 small" style="color:#fff;">📅 {{ post.play_date }}{% if post.play_time %} at {{ post.play_time }}{% endif %}</p>
+                {% endif %}
+
+                <div class="d-flex justify-content-between align-items-center mt-2">
+                    <span class="small" style="color:#fff;">
+                        👥 {{ post.players_have }} have &bull; Need {{ post.spots_left }} more
+                    </span>
+                    <span class="small" style="color:#00ff87;">{{ post.get_skill_level_display }}</span>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center mt-2">
+                    <span class="small" style="color:#888;">by <a href="{% url 'player_profile' post.posted_by.username %}" style="color:#00ff87;text-decoration:none;">{{ post.posted_by.username }}</a></span>
+                    <a href="{% url 'post_detail' post.pk %}" class="btn btn-p1 btn-sm px-3">View →</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="text-center py-5">
+    <h3 style="color:#fffefe;">No posts found 😕</h3>
+    <p style="color:#fffefe;">Be the first to post! Let others find you.</p>
+    {% if user.is_authenticated %}
+    <a href="{% url 'create_post' %}" class="btn btn-p1">➕ Post a Game</a>
+    {% endif %}
+</div>
+{% endif %}
+
+{% endblock %}

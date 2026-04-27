@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% block title %}Post a Game — Player One{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card p-4">
+            <h2 style="color:#00ff87;" class="mb-1">➕ Post a Game</h2>
+            <p class="text-muted mb-4">Tell others what you need — outdoor or online!</p>
+
+            <form method="post">
+                {% csrf_token %}
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Mode *</label>
+                        {{ form.mode }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Sport / Game *</label>
+                        {{ form.sport }}
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label">Title *</label>
+                        {{ form.title }}
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label">Description</label>
+                        {{ form.description }}
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Players You Have</label>
+                        {{ form.players_have }}
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Players You Need</label>
+                        {{ form.players_needed }}
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Skill Level</label>
+                        {{ form.skill_level }}
+                    </div>
+
+                    <!-- Outdoor Fields -->
+                    <div class="col-12"><hr style="border-color:#2a2a4a;"><p class="text-muted small">🏏 Outdoor Fields (fill if outdoor)</p></div>
+                    <div class="col-md-6">
+                        <label class="form-label">Location / Ground Name</label>
+                        {{ form.location }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">City</label>
+                        {{ form.city }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Date</label>
+                        {{ form.play_date }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Time</label>
+                        {{ form.play_time }}
+                    </div>
+
+                    <!-- Online Fields -->
+                    <div class="col-12"><hr style="border-color:#2a2a4a;"><p class="text-muted small">🎮 Online Fields (fill if online)</p></div>
+                    <div class="col-md-6">
+                        <label class="form-label">Platform</label>
+                        {{ form.game_platform }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Your Game ID</label>
+                        {{ form.game_id }}
+                    </div>
+
+                    <div class="col-12 mt-2">
+                        <button type="submit" class="btn btn-p1 btn-lg w-100">🚀 Post It!</button>
+                    </div>
+                </div>
+
+                {% if form.errors %}
+                <div class="alert alert-danger mt-3">
+                    Please fix the errors above.
+                    {{ form.errors }}
+                </div>
+                {% endif %}
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
