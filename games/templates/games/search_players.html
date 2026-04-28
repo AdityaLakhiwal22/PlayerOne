@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% block title %}Find Players — Player One{% endblock %}
+
+{% block content %}
+<h3 style="color:#00ff87;" class="mb-4">🔍 Find Players</h3>
+
+<div class="card p-3 mb-4">
+    <form method="get" class="row g-2 align-items-end">
+        <div class="col-md-5">
+            <label class="form-label">Username or keyword</label>
+            <input type="text" name="q" class="form-control" placeholder="e.g. Aditya, cricket lover..." value="{{ query }}">
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">City or Area</label>
+            <input type="text" name="city" class="form-control" placeholder="e.g. Mumbai, Andheri..." value="{{ city }}">
+        </div>
+        <div class="col-md-3">
+            <button type="submit" class="btn btn-p1 w-100">🔍 Search</button>
+        </div>
+    </form>
+</div>
+
+{% if query or city %}
+    {% if results %}
+    <p style="color:#888;" class="mb-3">{{ results|length }} player{{ results|length|pluralize }} found</p>
+    <div class="row g-3">
+        {% for profile in results %}
+        <div class="col-md-4">
+            <div class="card p-3 text-center">
+                {% if profile.avatar %}
+                <img src="{{ profile.avatar.url }}" class="rounded-circle mx-auto mb-2"
+                    style="width:70px;height:70px;object-fit:cover;border:2px solid #00ff87;">
+                {% else %}
+                <div class="rounded-circle mx-auto mb-2 d-flex align-items-center justify-content-center"
+                    style="width:70px;height:70px;background:#1a1a2e;border:2px solid #00ff87;font-size:1.8rem;">
+                    👤
+                </div>
+                {% endif %}
+
+                <h6 style="color:#fff;" class="mb-0">{{ profile.user.username }}</h6>
+
+                {% if profile.city %}
+                <p style="color:#888;" class="small mt-1 mb-1">
+                    📍 {% if profile.area %}{{ profile.area }}, {% endif %}{{ profile.city }}
+                </p>
+                {% endif %}
+
+                {% if profile.bio %}
+                <p style="color:#aaa;" class="small mb-2">{{ profile.bio|truncatechars:60 }}</p>
+                {% endif %}
+
+                <div class="d-flex justify-content-center gap-3 mb-2">
+                    <div>
+                        <p style="color:#00ff87;font-weight:800;" class="mb-0">{{ profile.user.posts.count }}</p>
+                        <p style="color:#888;" class="small mb-0">Posts</p>
+                    </div>
+                    <div>
+                        <p style="color:#00ff87;font-weight:800;" class="mb-0">{{ profile.reputation }}</p>
+                        <p style="color:#888;" class="small mb-0">Rep</p>
+                    </div>
+                </div>
+
+                <a href="{% url 'player_profile' profile.user.username %}" class="btn btn-p1 btn-sm w-100">View Profile</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="card p-4 text-center">
+        <p style="color:#888;">No players found for "{{ query }}{% if city %} in {{ city }}{% endif %}" 😕</p>
+    </div>
+    {% endif %}
+{% else %}
+<div class="card p-4 text-center">
+    <p style="color:#888;">Search by username or city to find players near you! 🏙️</p>
+</div>
+{% endif %}
+
+{% endblock %}

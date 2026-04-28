@@ -292,3 +292,28 @@ def rate_player(request, username, post_pk):
         'rated_user': rated_user,
         'post': post,
     })
+
+def search_players(request):
+    query = request.GET.get('q', '')
+    city = request.GET.get('city', '')
+    results = []
+
+    if query or city:
+        profiles = PlayerProfile.objects.select_related('user').all()
+        if query:
+            profiles = profiles.filter(
+                Q(user__username__icontains=query) |
+                Q(bio__icontains=query)
+            )
+        if city:
+            profiles = profiles.filter(
+                Q(city__icontains=city) |
+                Q(area__icontains=city)
+            )
+        results = profiles
+
+    return render(request, 'games/search_players.html', {
+        'results': results,
+        'query': query,
+        'city': city,
+    })
