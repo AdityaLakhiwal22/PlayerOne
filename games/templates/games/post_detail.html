@@ -61,7 +61,12 @@
                 {% if post.location %}
                 <div class="col-12">
                     <p class="mb-1 small" style="color:#888;">📍 Location</p>
-                    <p class="fw-bold" style="color:#fff;">{{ post.location }}{% if post.city %}, {{ post.city }}{% endif %}</p>
+                    <p class="fw-bold" style="color:#fff;">
+                        {{ post.location }}{% if post.city %}, {{ post.city }}{% endif %}
+                        {% if post.map_link %}
+                        <a href="{{ post.map_link }}" target="_blank" class="btn btn-outline-success btn-sm ms-2">📍 Open in Maps</a>
+                        {% endif %}
+                    </p>
                 </div>
                 {% endif %}
                 {% if post.play_date %}

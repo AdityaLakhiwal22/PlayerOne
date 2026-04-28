@@ -24,6 +24,10 @@
           <div class="col-md-6"><label class="form-label">Time</label>{{ form.play_time }}</div>
           <div class="col-md-6"><label class="form-label">Platform</label>{{ form.game_platform }}</div>
           <div class="col-md-6"><label class="form-label">Game ID</label>{{ form.game_id }}</div>
+          <div class="col-12">
+            <label class="form-label">Google Maps Link (optional)</label>
+            {{ form.map_link }}
+          </div>
           <div class="col-12 d-flex gap-2 mt-2">
             <button type="submit" class="btn btn-p1 flex-grow-1">💾 Save Changes</button>
             <a href="{% url 'post_detail' post.pk %}" class="btn btn-outline-secondary">Cancel</a>

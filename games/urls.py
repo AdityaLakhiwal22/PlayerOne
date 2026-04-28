@@ -17,4 +17,5 @@ urlpatterns = [
     path('notifications/read/<int:pk>/', views.mark_read, name='mark_read'),
     path('rate/<str:username>/<int:post_pk>/', views.rate_player, name='rate_player'),
     path('search/', views.search_players, name='search_players'),
+    path('map/', views.map_view, name='map_view'),
 ]

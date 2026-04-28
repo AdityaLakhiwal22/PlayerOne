@@ -79,6 +79,7 @@ class GamePost(models.Model):
     # For online games
     game_platform = models.CharField(max_length=50, blank=True, help_text="e.g. Mobile, PC, PS5")
     game_id = models.CharField(max_length=100, blank=True, help_text="Your in-game ID/username")
+    map_link = models.URLField(blank=True, help_text="Paste Google Maps link of the ground")
 
     # Status
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='open')

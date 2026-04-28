@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 from .models import GamePost, JoinRequest, Comment, PlayerProfile
 from .forms import GamePostForm, JoinRequestForm, CommentForm, RegisterForm, PlayerProfileForm
 from .models import GamePost, JoinRequest, Comment, PlayerProfile, Notification, Reputation
-
+import json
 
 def home(request):
     posts = GamePost.objects.filter(status='open').select_related('posted_by')
@@ -316,4 +316,31 @@ def search_players(request):
         'results': results,
         'query': query,
         'city': city,
+    })
+
+def map_view(request):
+    posts = GamePost.objects.filter(
+        mode='outdoor',
+        status='open',
+        city__isnull=False
+    ).exclude(city='').select_related('posted_by')
+
+    # Build data for map markers
+    map_data = []
+    for post in posts:
+        map_data.append({
+            'title': post.title,
+            'sport': post.get_sport_display(),
+            'location': post.location,
+            'city': post.city,
+            'date': str(post.play_date) if post.play_date else '',
+            'players_needed': post.spots_left(),
+            'skill': post.get_skill_level_display(),
+            'url': f'/post/{post.pk}/',
+            'posted_by': post.posted_by.username,
+        })
+
+    return render(request, 'games/map_view.html', {
+        'posts': posts,
+        'map_data_json': json.dumps(map_data),
     })
