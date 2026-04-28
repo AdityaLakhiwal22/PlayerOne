@@ -105,7 +105,12 @@
                     </a>
                 </li>
                 <li class="nav-item"><a class="nav-link" href="{% url 'player_profile' user.username %}">👤 {{ user.username }}</a></li>
-                <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">🚪 Logout</a></li>
+                <li class="nav-item">
+                    <form method="post" action="{% url 'logout' %}" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="nav-link btn btn-link" style="color:#ccc;text-decoration:none;">🚪 Logout</button>
+                    </form>
+                </li>
                 {% else %}
                 <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">🔑 Login</a></li>
                 <li class="nav-item"><a class="nav-link btn btn-p1 ms-2 px-3" href="{% url 'register' %}">Join Now</a></li>
