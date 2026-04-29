@@ -161,3 +161,44 @@ class Reputation(models.Model):
 
     def __str__(self):
         return f"{self.given_by.username} → {self.given_to.username} ({self.score}⭐)"
+
+class Venue(models.Model):
+    VENUE_TYPES = [
+        ('ground', '🏏 Ground'),
+        ('turf', '⚽ Turf'),
+    ]
+
+    SPORT_CHOICES = [
+        ('cricket', '🏏 Cricket'),
+        ('football', '⚽ Football'),
+        ('basketball', '🏀 Basketball'),
+        ('volleyball', '🏐 Volleyball'),
+        ('badminton', '🏸 Badminton'),
+        ('kabaddi', '🤼 Kabaddi'),
+        ('multiple', '🎯 Multiple Sports'),
+    ]
+
+    name = models.CharField(max_length=200)
+    venue_type = models.CharField(max_length=10, choices=VENUE_TYPES)
+    area = models.CharField(max_length=100, help_text="e.g. Vile Parle")
+    city = models.CharField(max_length=100, help_text="e.g. Mumbai")
+    address = models.TextField(blank=True)
+    map_link = models.URLField(blank=True)
+    sports = models.CharField(max_length=20, choices=SPORT_CHOICES, default='multiple')
+    contact = models.CharField(max_length=15, blank=True)
+    opening_hours = models.CharField(max_length=100, blank=True, help_text="e.g. 6am - 10pm")
+    entry_fee = models.CharField(max_length=100, blank=True, help_text="e.g. Free, Rs 50/person")
+    price_per_hour = models.CharField(max_length=100, blank=True, help_text="e.g. Rs 800/hr (for turfs)")
+    description = models.TextField(blank=True)
+    image1 = models.ImageField(upload_to='venues/', blank=True, null=True)
+    image2 = models.ImageField(upload_to='venues/', blank=True, null=True)
+    image3 = models.ImageField(upload_to='venues/', blank=True, null=True)
+    added_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='venues')
+    is_verified = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['city', 'area', 'name']
+
+    def __str__(self):
+        return f"{self.name} — {self.area}, {self.city}"

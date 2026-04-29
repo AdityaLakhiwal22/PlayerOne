@@ -1,7 +1,8 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .models import GamePost, JoinRequest, Comment, PlayerProfile
+from .models import GamePost, JoinRequest, Comment, PlayerProfile, Venue
+
 
 BS = {'class': 'form-control'}
 BS_SELECT = {'class': 'form-select'}
@@ -77,4 +78,31 @@ class CommentForm(forms.ModelForm):
         fields = ['text']
         widgets = {
             'text': forms.TextInput(attrs={**BS, 'placeholder': 'Add a comment...'}),
+        }
+
+class VenueForm(forms.ModelForm):
+    class Meta:
+        model = Venue
+        fields = [
+            'name', 'venue_type', 'area', 'city', 'address',
+            'map_link', 'sports', 'contact', 'opening_hours',
+            'entry_fee', 'price_per_hour', 'description',
+            'image1', 'image2', 'image3',
+        ]
+        widgets = {
+            'name': forms.TextInput(attrs={**BS, 'placeholder': 'e.g. Azad Ground'}),
+            'venue_type': forms.Select(attrs=BS_SELECT),
+            'area': forms.TextInput(attrs={**BS, 'placeholder': 'e.g. Vile Parle'}),
+            'city': forms.TextInput(attrs={**BS, 'placeholder': 'e.g. Mumbai'}),
+            'address': forms.Textarea(attrs={**BS, 'rows': 2, 'placeholder': 'Full address...'}),
+            'map_link': forms.URLInput(attrs={**BS, 'placeholder': 'https://maps.google.com/...'}),
+            'sports': forms.Select(attrs=BS_SELECT),
+            'contact': forms.TextInput(attrs={**BS, 'placeholder': 'e.g. 9876543210'}),
+            'opening_hours': forms.TextInput(attrs={**BS, 'placeholder': 'e.g. 6am - 10pm'}),
+            'entry_fee': forms.TextInput(attrs={**BS, 'placeholder': 'e.g. Free, Rs 50/person'}),
+            'price_per_hour': forms.TextInput(attrs={**BS, 'placeholder': 'e.g. Rs 800/hr'}),
+            'description': forms.Textarea(attrs={**BS, 'rows': 3, 'placeholder': 'Any extra info...'}),
+            'image1': forms.FileInput(attrs=BS),
+            'image2': forms.FileInput(attrs=BS),
+            'image3': forms.FileInput(attrs=BS),
         }

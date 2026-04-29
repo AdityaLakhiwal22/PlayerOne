@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import GamePost, JoinRequest, Comment, PlayerProfile
+from .models import GamePost, JoinRequest, Comment, PlayerProfile, Venue
 
 @admin.register(GamePost)
 class GamePostAdmin(admin.ModelAdmin):
@@ -17,3 +17,10 @@ class PlayerProfileAdmin(admin.ModelAdmin):
     list_display = ['user', 'city', 'area', 'reputation']
 
 admin.site.register(Comment)
+
+@admin.register(Venue)
+class VenueAdmin(admin.ModelAdmin):
+    list_display = ['name', 'venue_type', 'area', 'city', 'sports', 'is_verified']
+    list_filter = ['venue_type', 'city', 'is_verified']
+    search_fields = ['name', 'area', 'city']
+    list_editable = ['is_verified']

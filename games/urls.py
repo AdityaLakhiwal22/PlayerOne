@@ -18,4 +18,9 @@ urlpatterns = [
     path('rate/<str:username>/<int:post_pk>/', views.rate_player, name='rate_player'),
     path('search/', views.search_players, name='search_players'),
     path('map/', views.map_view, name='map_view'),
+    path('venues/', views.venues_home, name='venues_home'),
+    path('venues/add/', views.add_venue, name='add_venue'),
+    path('venues/detail/<int:pk>/', views.venue_detail, name='venue_detail'),
+    path('venues/<str:city>/', views.venues_city, name='venues_city'),
+    path('venues/<str:city>/<str:area>/', views.venues_area, name='venues_area'),
 ]

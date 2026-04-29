@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% block title %}Add Venue — Player One{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card p-4">
+            <h2 style="color:#00ff87;" class="mb-1">🏟️ Add a Venue</h2>
+            <p style="color:#888;" class="mb-4">Add a ground or turf so others can find it!</p>
+
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="row g-3">
+                    <div class="col-md-8">
+                        <label class="form-label">Venue Name *</label>
+                        {{ form.name }}
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Type *</label>
+                        {{ form.venue_type }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Area *</label>
+                        {{ form.area }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">City *</label>
+                        {{ form.city }}
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label">Address</label>
+                        {{ form.address }}
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label">Google Maps Link</label>
+                        {{ form.map_link }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Sports Available</label>
+                        {{ form.sports }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Contact Number</label>
+                        {{ form.contact }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Opening Hours</label>
+                        {{ form.opening_hours }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Entry Fee (for grounds)</label>
+                        {{ form.entry_fee }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Price per Hour (for turfs)</label>
+                        {{ form.price_per_hour }}
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label">Description</label>
+                        {{ form.description }}
+                    </div>
+
+                    <div class="col-12"><hr style="border-color:#2a2a4a;"><p style="color:#888;" class="small">📸 Photos (up to 3)</p></div>
+                    <div class="col-md-4">
+                        <label class="form-label">Photo 1</label>
+                        {{ form.image1 }}
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Photo 2</label>
+                        {{ form.image2 }}
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Photo 3</label>
+                        {{ form.image3 }}
+                    </div>
+
+                    <div class="col-12 mt-2">
+                        <button type="submit" class="btn btn-p1 w-100 btn-lg">🏟️ Add Venue!</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

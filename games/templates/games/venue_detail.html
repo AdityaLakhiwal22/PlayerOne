@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+{% block title %}{{ venue.name }} — Player One{% endblock %}
+
+{% block content %}
+<div class="mb-3">
+    <a href="{% url 'venues_home' %}" style="color:#888;text-decoration:none;">🏟️ Venues</a>
+    <span style="color:#888;"> / </span>
+    <a href="{% url 'venues_city' venue.city %}" style="color:#888;text-decoration:none;">{{ venue.city }}</a>
+    <span style="color:#888;"> / </span>
+    <a href="{% url 'venues_area' venue.city venue.area %}" style="color:#888;text-decoration:none;">{{ venue.area }}</a>
+    <span style="color:#888;"> / </span>
+    <span style="color:#00ff87;">{{ venue.name }}</span>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <!-- Images -->
+        {% if venue.image1 or venue.image2 or venue.image3 %}
+        <div class="row g-2 mb-4">
+            {% if venue.image1 %}
+            <div class="col-{% if venue.image2 or venue.image3 %}6{% else %}12{% endif %}">
+                <img src="{{ venue.image1.url }}" class="w-100 rounded" style="height:250px;object-fit:cover;">
+            </div>
+            {% endif %}
+            {% if venue.image2 %}
+            <div class="col-6">
+                <img src="{{ venue.image2.url }}" class="w-100 rounded" style="height:{% if venue.image3 %}120{% else %}250{% endif %}px;object-fit:cover;">
+            </div>
+            {% endif %}
+            {% if venue.image3 %}
+            <div class="col-6">
+                <img src="{{ venue.image3.url }}" class="w-100 rounded" style="height:120px;object-fit:cover;">
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <div class="card p-4 mb-4">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <h2 style="color:#fff;">{{ venue.name }}</h2>
+                    <p style="color:#888;">
+                        {% if venue.venue_type == 'ground' %}🏏 Ground{% else %}⚽ Turf{% endif %}
+                        · 📍 {{ venue.area }}, {{ venue.city }}
+                        {% if venue.is_verified %} · <span style="color:#00ff87;">✅ Verified</span>{% endif %}
+                    </p>
+                </div>
+            </div>
+
+            {% if venue.description %}
+            <p style="color:#ccc;">{{ venue.description }}</p>
+            {% endif %}
+
+            <hr style="border-color:#2a2a4a;">
+
+            <div class="row g-3">
+                <div class="col-6">
+                    <p style="color:#888;" class="small mb-1">🎯 Sports</p>
+                    <p style="color:#fff;" class="fw-bold mb-0">{{ venue.get_sports_display }}</p>
+                </div>
+                {% if venue.opening_hours %}
+                <div class="col-6">
+                    <p style="color:#888;" class="small mb-1">⏰ Hours</p>
+                    <p style="color:#fff;" class="fw-bold mb-0">{{ venue.opening_hours }}</p>
+                </div>
+                {% endif %}
+                {% if venue.entry_fee %}
+                <div class="col-6">
+                    <p style="color:#888;" class="small mb-1">💰 Entry Fee</p>
+                    <p style="color:#fff;" class="fw-bold mb-0">{{ venue.entry_fee }}</p>
+                </div>
+                {% endif %}
+                {% if venue.price_per_hour %}
+                <div class="col-6">
+                    <p style="color:#888;" class="small mb-1">💰 Price/hr</p>
+                    <p style="color:#fff;" class="fw-bold mb-0">{{ venue.price_per_hour }}</p>
+                </div>
+                {% endif %}
+                {% if venue.contact %}
+                <div class="col-6">
+                    <p style="color:#888;" class="small mb-1">📞 Contact</p>
+                    <p style="color:#fff;" class="fw-bold mb-0">{{ venue.contact }}</p>
+                </div>
+                {% endif %}
+                {% if venue.address %}
+                <div class="col-12">
+                    <p style="color:#888;" class="small mb-1">📍 Address</p>
+                    <p style="color:#fff;" class="fw-bold mb-0">{{ venue.address }}</p>
+                </div>
+                {% endif %}
+            </div>
+
+            {% if venue.map_link %}
+            <a href="{{ venue.map_link }}" target="_blank" class="btn btn-outline-success mt-3">📍 Open in Google Maps</a>
+            {% endif %}
+        </div>
+
+        <!-- Related Posts -->
+        {% if related_posts %}
+        <div class="card p-4">
+            <h5 style="color:#00ff87;">🎮 Active Games Here</h5>
+            <hr style="border-color:#2a2a4a;">
+            {% for post in related_posts %}
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <div>
+                    <p style="color:#fff;" class="mb-0">{{ post.title }}</p>
+                    <p style="color:#888;" class="small mb-0">{{ post.get_sport_display }} · Need {{ post.spots_left }} more</p>
+                </div>
+                <a href="{% url 'post_detail' post.pk %}" class="btn btn-p1 btn-sm">Join →</a>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card p-3">
+            <p style="color:#888;" class="small mb-1">Added by</p>
+            {% if venue.added_by %}
+            <a href="{% url 'player_profile' venue.added_by.username %}" style="color:#00ff87;text-decoration:none;">
+                {{ venue.added_by.username }}
+            </a>
+            {% endif %}
+            <hr style="border-color:#2a2a4a;">
+            {% if user.is_authenticated %}
+            <a href="{% url 'add_venue' %}" class="btn btn-p1 w-100 btn-sm">➕ Add Another Venue</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

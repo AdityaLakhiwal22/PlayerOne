@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% block title %}Grounds & Turfs — Player One{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 style="color:#00ff87;">🏟️ Grounds & Turfs</h2>
+        <p style="color:#888;" class="mb-0">Find grounds and turfs near you</p>
+    </div>
+    {% if user.is_authenticated %}
+    <a href="{% url 'add_venue' %}" class="btn btn-p1">➕ Add Venue</a>
+    {% endif %}
+</div>
+
+<!-- Stats -->
+<div class="row g-3 mb-4">
+    <div class="col-4">
+        <div class="card p-3 text-center">
+            <p style="color:#00ff87;font-size:2rem;font-weight:800;" class="mb-0">{{ total_venues }}</p>
+            <p style="color:#888;" class="small mb-0">Total Venues</p>
+        </div>
+    </div>
+    <div class="col-4">
+        <div class="card p-3 text-center">
+            <p style="color:#00ff87;font-size:2rem;font-weight:800;" class="mb-0">{{ grounds }}</p>
+            <p style="color:#888;" class="small mb-0">Grounds</p>
+        </div>
+    </div>
+    <div class="col-4">
+        <div class="card p-3 text-center">
+            <p style="color:#00ff87;font-size:2rem;font-weight:800;" class="mb-0">{{ turfs }}</p>
+            <p style="color:#888;" class="small mb-0">Turfs</p>
+        </div>
+    </div>
+</div>
+
+<!-- Cities -->
+{% if cities %}
+<h5 style="color:#fff;" class="mb-3">📍 Browse by City</h5>
+<div class="row g-3">
+    {% for city in cities %}
+    <div class="col-md-3 col-6">
+        <a href="{% url 'venues_city' city %}" style="text-decoration:none;">
+            <div class="card p-3 text-center" style="cursor:pointer;">
+                <div style="font-size:2rem;">🏙️</div>
+                <h6 style="color:#fff;" class="mt-2 mb-0">{{ city }}</h6>
+                <p style="color:#888;" class="small mb-0">
+                    {{ city }} venues
+                </p>
+            </div>
+        </a>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="card p-4 text-center">
+    <p style="color:#888;">No venues added yet.</p>
+    {% if user.is_authenticated %}
+    <a href="{% url 'add_venue' %}" class="btn btn-p1">➕ Be the first to add one!</a>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}

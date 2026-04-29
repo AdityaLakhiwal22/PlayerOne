@@ -5,8 +5,8 @@ from django.contrib import messages
 from django.db.models import Q
 from django.contrib.auth.models import User
 from .models import GamePost, JoinRequest, Comment, PlayerProfile
-from .forms import GamePostForm, JoinRequestForm, CommentForm, RegisterForm, PlayerProfileForm
-from .models import GamePost, JoinRequest, Comment, PlayerProfile, Notification, Reputation
+from .forms import GamePostForm, JoinRequestForm, CommentForm, RegisterForm, PlayerProfileForm, VenueForm
+from .models import GamePost, JoinRequest, Comment, PlayerProfile, Notification, Reputation, Venue
 import json
 
 def home(request):
@@ -344,3 +344,73 @@ def map_view(request):
         'posts': posts,
         'map_data_json': json.dumps(map_data),
     })
+
+def venues_home(request):
+    # Get all unique cities
+    cities = Venue.objects.values_list('city', flat=True).distinct().order_by('city')
+    total_venues = Venue.objects.count()
+    grounds = Venue.objects.filter(venue_type='ground').count()
+    turfs = Venue.objects.filter(venue_type='turf').count()
+    return render(request, 'games/venues_home.html', {
+        'cities': cities,
+        'total_venues': total_venues,
+        'grounds': grounds,
+        'turfs': turfs,
+    })
+
+
+def venues_city(request, city):
+    areas = Venue.objects.filter(
+        city__iexact=city
+    ).values_list('area', flat=True).distinct().order_by('area')
+    grounds_count = Venue.objects.filter(city__iexact=city, venue_type='ground').count()
+    turfs_count = Venue.objects.filter(city__iexact=city, venue_type='turf').count()
+    return render(request, 'games/venues_city.html', {
+        'city': city,
+        'areas': areas,
+        'grounds_count': grounds_count,
+        'turfs_count': turfs_count,
+    })
+
+
+def venues_area(request, city, area):
+    venue_type = request.GET.get('type', '')
+    venues = Venue.objects.filter(city__iexact=city, area__iexact=area)
+    if venue_type:
+        venues = venues.filter(venue_type=venue_type)
+    grounds = venues.filter(venue_type='ground')
+    turfs = venues.filter(venue_type='turf')
+    return render(request, 'games/venues_area.html', {
+        'city': city,
+        'area': area,
+        'grounds': grounds,
+        'turfs': turfs,
+    })
+
+
+def venue_detail(request, pk):
+    venue = get_object_or_404(Venue, pk=pk)
+    # Show active posts at this venue
+    related_posts = GamePost.objects.filter(
+        location__icontains=venue.name,
+        status='open'
+    )[:5]
+    return render(request, 'games/venue_detail.html', {
+        'venue': venue,
+        'related_posts': related_posts,
+    })
+
+
+@login_required
+def add_venue(request):
+    if request.method == 'POST':
+        form = VenueForm(request.POST, request.FILES)
+        if form.is_valid():
+            venue = form.save(commit=False)
+            venue.added_by = request.user
+            venue.save()
+            messages.success(request, f"{venue.name} added! ✅ It will be verified soon.")
+            return redirect('venue_detail', pk=venue.pk)
+    else:
+        form = VenueForm()
+    return render(request, 'games/add_venue.html', {'form': form})
