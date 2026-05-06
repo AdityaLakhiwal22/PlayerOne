@@ -4,23 +4,55 @@
 {% block content %}
 <div class="row justify-content-center">
     <div class="col-md-5">
-        <div class="card p-4">
-            <h2 style="color:#00ff87;" class="mb-4 text-center">🔑 Login</h2>
-            <form method="post">
-                {% csrf_token %}
-                {% for field in form %}
-                <div class="mb-3">
-                    <label class="form-label">{{ field.label }}</label>
-                    {{ field }}
-                </div>
-                {% endfor %}
-                <button type="submit" class="btn btn-p1 w-100 mt-2">Login</button>
-            </form>
-            <p class="text-center text-muted mt-3">
-                No account? <a href="{% url 'register' %}" style="color:#00ff87;">Register here</a> · 
-                <a href="{% url 'password_reset' %}" style="color:#888;">Forgot password?</a>
+
+        <!-- Header -->
+        <div style="text-align:center;margin-bottom:32px;">
+            <h1 style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:3.5rem;text-transform:uppercase;letter-spacing:3px;color:#fff;margin:0;">
+                Welcome<br><span style="color:var(--p1-green);">Back</span>
+            </h1>
+            <p style="color:#555;font-size:0.75rem;letter-spacing:3px;text-transform:uppercase;margin:8px 0 0 0;">
+                Login to find your squad
             </p>
         </div>
+
+        <!-- Form -->
+        <div style="border:1px solid #222;">
+            <form method="post" style="padding:32px;">
+                {% csrf_token %}
+
+                <div style="margin-bottom:20px;">
+                    <label class="form-label">Username</label>
+                    <input type="text" name="username" class="form-control" placeholder="Your username" required>
+                </div>
+
+                <div style="margin-bottom:24px;">
+                    <label class="form-label">Password</label>
+                    <input type="password" name="password" class="form-control" placeholder="Your password" required>
+                </div>
+
+                {% if form.errors %}
+                <div style="border:1px solid #ff4444;padding:12px;margin-bottom:16px;">
+                    <p style="color:#ff4444;font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin:0;font-size:0.85rem;">
+                        Invalid username or password
+                    </p>
+                </div>
+                {% endif %}
+
+                <button type="submit" class="btn btn-p1 w-100" style="padding:14px;font-size:1rem;letter-spacing:3px;">
+                    Login →
+                </button>
+            </form>
+
+            <div style="border-top:1px solid #222;padding:20px 32px;text-align:center;">
+                <p style="color:#555;font-size:0.75rem;letter-spacing:1px;text-transform:uppercase;margin:0;">
+                    No account?
+                    <a href="{% url 'register' %}" style="color:var(--p1-green);text-decoration:none;font-weight:700;">Join Free</a>
+                    &nbsp;·&nbsp;
+                    <a href="{% url 'password_reset' %}" style="color:#444;text-decoration:none;">Forgot Password?</a>
+                </p>
+            </div>
+        </div>
+
     </div>
 </div>
 {% endblock %}
