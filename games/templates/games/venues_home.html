@@ -34,6 +34,128 @@
     </div>
 </div>
 
+<!-- Venues Map -->
+<div class="card p-0 mb-4" style="overflow:hidden;border-radius:12px;">
+    <div id="venues-map" style="height:450px;width:100%;"></div>
+</div>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+const map = L.map('venues-map').setView([19.0760, 72.8777], 13);
+
+L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    attribution: '© OpenStreetMap © CARTO'
+}).addTo(map);
+
+// Green for grounds, Blue for turfs
+const groundIcon = L.divIcon({
+    html: '<div style="background:#00ff87;width:14px;height:14px;border-radius:50%;border:2px solid #000;"></div>',
+    iconSize: [14, 14],
+    className: ''
+});
+
+const turfIcon = L.divIcon({
+    html: '<div style="background:#7b9fff;width:14px;height:14px;border-radius:50%;border:2px solid #000;"></div>',
+    iconSize: [14, 14],
+    className: ''
+});
+
+const venues = {{ venues_map_json|safe }};
+
+const cityCoords = {
+    'mumbai': [19.0760, 72.8777],
+    'delhi': [28.6139, 77.2090],
+    'bangalore': [12.9716, 77.5946],
+    'bengaluru': [12.9716, 77.5946],
+    'hyderabad': [17.3850, 78.4867],
+    'chennai': [13.0827, 80.2707],
+    'kolkata': [22.5726, 88.3639],
+    'pune': [18.5204, 73.8567],
+    'ahmedabad': [23.0225, 72.5714],
+    'jaipur': [26.9124, 75.7873],
+    'nagpur': [21.1458, 79.0882],
+    'indore': [22.7196, 75.8577],
+    'goa': [15.2993, 74.1240],
+};
+
+const areaOffsets = {};
+
+venues.forEach(venue => {
+    let lat = venue.lat;
+    let lng = venue.lng;
+
+    if (!lat || !lng) {
+        const cityKey = venue.city.toLowerCase().trim();
+        let coords = cityCoords[cityKey];
+        if (!coords) {
+            for (const [name, c] of Object.entries(cityCoords)) {
+                if (cityKey.includes(name)) { coords = c; break; }
+            }
+        }
+        if (coords) {
+            lat = coords[0] + (Math.random() - 0.5) * 0.02;
+            lng = coords[1] + (Math.random() - 0.5) * 0.02;
+        }
+    }
+
+    if (lat && lng) {
+        const icon = venue.type === 'ground' ? groundIcon : turfIcon;
+        const marker = L.marker([lat, lng], {icon}).addTo(map);
+        marker.bindPopup(`
+            <div style="min-width:180px;">
+                <strong style="font-size:1rem;">${venue.name}</strong><br>
+                <span style="color:${venue.type === 'ground' ? '#00aa55' : '#5577ff'};">
+                    ${venue.type === 'ground' ? '🏏 Ground' : '⚽ Turf'}
+                </span><br>
+                📍 ${venue.area}, ${venue.city}<br>
+                🎯 ${venue.sports}<br>
+                ${venue.price ? '💰 ' + venue.price + '<br>' : ''}
+                ${venue.hours ? '⏰ ' + venue.hours + '<br>' : ''}
+                <a href="${venue.url}" style="color:#00aa55;font-weight:bold;">View Details →</a>
+            </div>
+        `);
+    }
+});
+
+// Auto fit map to show all markers
+const markerGroup = [];
+venues.forEach(venue => {
+    if (venue.lat && venue.lng) {
+        markerGroup.push([venue.lat, venue.lng]);
+    }
+});
+if (markerGroup.length > 0) {
+    map.fitBounds(markerGroup, {padding: [30, 30], maxZoom: 15});
+}
+
+// Legend
+const legend = L.control({position: 'bottomright'});
+legend.onAdd = function() {
+    const div = L.DomUtil.create('div');
+    div.innerHTML = `
+        <div style="background:#1a1a2e;padding:8px 12px;border-radius:8px;border:1px solid #2a2a4a;">
+            <div style="color:#fff;font-size:0.8rem;margin-bottom:4px;">
+                <span style="display:inline-block;width:12px;height:12px;background:#00ff87;border-radius:50%;margin-right:6px;"></span>Ground
+            </div>
+            <div style="color:#fff;font-size:0.8rem;">
+                <span style="display:inline-block;width:12px;height:12px;background:#7b9fff;border-radius:50%;margin-right:6px;"></span>Turf
+            </div>
+        </div>
+    `;
+    return div;
+};
+legend.addTo(map);
+
+// Center on user location
+if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(pos => {
+        map.setView([pos.coords.latitude, pos.coords.longitude], 13);
+    });
+}
+</script>
+
 <!-- Cities -->
 {% if cities %}
 <h5 style="color:#fff;" class="mb-3">📍 Browse by City</h5>

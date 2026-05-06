@@ -193,6 +193,8 @@ class Venue(models.Model):
     image1 = models.ImageField(upload_to='venues/', blank=True, null=True)
     image2 = models.ImageField(upload_to='venues/', blank=True, null=True)
     image3 = models.ImageField(upload_to='venues/', blank=True, null=True)
+    latitude = models.FloatField(null=True, blank=True)
+    longitude = models.FloatField(null=True, blank=True)
     added_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='venues')
     is_verified = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)

@@ -88,6 +88,7 @@ class VenueForm(forms.ModelForm):
             'map_link', 'sports', 'contact', 'opening_hours',
             'entry_fee', 'price_per_hour', 'description',
             'image1', 'image2', 'image3',
+            'latitude', 'longitude',
         ]
         widgets = {
             'name': forms.TextInput(attrs={**BS, 'placeholder': 'e.g. Azad Ground'}),
@@ -102,6 +103,8 @@ class VenueForm(forms.ModelForm):
             'entry_fee': forms.TextInput(attrs={**BS, 'placeholder': 'e.g. Free, Rs 50/person'}),
             'price_per_hour': forms.TextInput(attrs={**BS, 'placeholder': 'e.g. Rs 800/hr'}),
             'description': forms.Textarea(attrs={**BS, 'rows': 3, 'placeholder': 'Any extra info...'}),
+            'latitude': forms.NumberInput(attrs={**BS, 'placeholder': 'e.g. 19.1075'}),
+            'longitude': forms.NumberInput(attrs={**BS, 'placeholder': 'e.g. 72.8263'}),
             'image1': forms.FileInput(attrs=BS),
             'image2': forms.FileInput(attrs=BS),
             'image3': forms.FileInput(attrs=BS),

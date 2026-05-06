@@ -346,16 +346,33 @@ def map_view(request):
     })
 
 def venues_home(request):
-    # Get all unique cities
     cities = Venue.objects.values_list('city', flat=True).distinct().order_by('city')
     total_venues = Venue.objects.count()
     grounds = Venue.objects.filter(venue_type='ground').count()
     turfs = Venue.objects.filter(venue_type='turf').count()
+    all_venues = Venue.objects.all()
+
+    venues_map_data = []
+    for v in all_venues:
+        venues_map_data.append({
+            'name': v.name,
+            'type': v.venue_type,
+            'area': v.area,
+            'city': v.city,
+            'sports': v.get_sports_display(),
+            'price': v.price_per_hour or v.entry_fee,
+            'hours': v.opening_hours,
+            'url': f'/venues/detail/{v.pk}/',
+            'lat': v.latitude,
+            'lng': v.longitude,
+        })
+
     return render(request, 'games/venues_home.html', {
         'cities': cities,
         'total_venues': total_venues,
         'grounds': grounds,
         'turfs': turfs,
+        'venues_map_json': json.dumps(venues_map_data),
     })
 
 

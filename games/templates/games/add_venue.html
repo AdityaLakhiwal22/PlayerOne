@@ -82,4 +82,17 @@
         </div>
     </div>
 </div>
+<script>
+// Auto extract coordinates from Google Maps link
+document.getElementById('id_map_link').addEventListener('change', function() {
+    const url = this.value;
+    // Match coordinates pattern @lat,lng
+    const match = url.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
+    if (match) {
+        document.getElementById('id_latitude').value = match[1];
+        document.getElementById('id_longitude').value = match[2];
+        alert('📍 Coordinates extracted automatically! Lat: ' + match[1] + ', Lng: ' + match[2]);
+    }
+});
+</script>
 {% endblock %}

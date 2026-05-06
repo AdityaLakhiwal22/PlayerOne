@@ -1,23 +1,49 @@
 {% extends 'base.html' %}
-{% block title %}Player One — Find Players Near You{% endblock %}
+{% block title %}Player One — Find Players Anywhere{% endblock %}
 
 {% block content %}
 
-<!-- Hero -->
-<div class="text-center py-4 mb-4">
-    <h1 style="font-size:2.5rem; font-weight:900; color:#00ff87;">
-        Find Players. Anytime. Anywhere. 🏆
+<!-- Hero Section -->
+<div class="text-center py-5 mb-2" style="border-bottom:1px solid #222;margin-left:-12px;margin-right:-12px;padding-left:12px;padding-right:12px;">
+    <p style="font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:4px;color:#666;font-size:0.85rem;text-transform:uppercase;">
+        India's Sports Community Platform
+    </p>
+    <h1 style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:clamp(3rem,8vw,7rem);line-height:1;color:#fff;text-transform:uppercase;letter-spacing:2px;">
+        FIND PLAYERS.<br>
+        <span style="color:var(--p1-green);">ANYTIME.</span><br>
+        ANYWHERE.
     </h1>
-    <p style="color:#fff;">Cricket at the ground, BGMI ranked, football on Sunday — find your squad.</p>
+    <p style="color:#666;font-size:1rem;letter-spacing:2px;text-transform:uppercase;margin-top:16px;">
+        Cricket · Football · BGMI · Kabaddi · Badminton & More
+    </p>
     {% if not user.is_authenticated %}
-    <a href="{% url 'register' %}" class="btn btn-p1 btn-lg px-5 mt-2">Get Started Free</a>
+    <div class="d-flex gap-3 justify-content-center mt-4">
+        <a href="{% url 'register' %}" class="btn btn-p1 btn-lg px-5">Join Free</a>
+        <a href="{% url 'login' %}" class="btn btn-p1-outline btn-lg px-5">Login</a>
+    </div>
     {% else %}
-    <a href="{% url 'create_post' %}" class="btn btn-p1 btn-lg px-5 mt-2">➕ Post a Game Now</a>
+    <a href="{% url 'create_post' %}" class="btn btn-p1 btn-lg px-5 mt-4">+ Post a Game Now</a>
     {% endif %}
 </div>
 
+<!-- Stats Bar -->
+<div class="row g-0 mb-4" style="border:1px solid #222;border-top:none;">
+    <div class="col-4 text-center py-3" style="border-right:1px solid #222;">
+        <p style="font-family:'Barlow Condensed',sans-serif;font-size:1.8rem;font-weight:900;color:var(--p1-green);margin:0;">{{ posts|length }}+</p>
+        <p style="color:#666;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase;margin:0;">Active Games</p>
+    </div>
+    <div class="col-4 text-center py-3" style="border-right:1px solid #222;">
+        <p style="font-family:'Barlow Condensed',sans-serif;font-size:1.8rem;font-weight:900;color:var(--p1-green);margin:0;">2</p>
+        <p style="color:#666;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase;margin:0;">Sports</p>
+    </div>
+    <div class="col-4 text-center py-3">
+        <p style="font-family:'Barlow Condensed',sans-serif;font-size:1.8rem;font-weight:900;color:var(--p1-green);margin:0;">🇮🇳</p>
+        <p style="color:#666;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase;margin:0;">Made in India</p>
+    </div>
+</div>
+
 <!-- Filters -->
-<div class="card p-3 mb-4">
+<div class="mb-4" style="border:1px solid #222;padding:16px;">
     <form method="get" class="row g-2 align-items-end">
         <div class="col-md-3">
             <label class="form-label">Search</label>
@@ -46,9 +72,17 @@
             <input type="text" name="city" class="form-control" placeholder="e.g. Mumbai" value="{{ filters.city }}">
         </div>
         <div class="col-md-2">
-            <button type="submit" class="btn btn-p1 w-100">🔍 Filter</button>
+            <button type="submit" class="btn btn-p1 w-100">Filter</button>
         </div>
     </form>
+</div>
+
+<!-- Section Title -->
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 style="font-family:'Barlow Condensed',sans-serif;font-size:1.5rem;font-weight:900;letter-spacing:3px;text-transform:uppercase;color:#fff;margin:0;">
+        — Open Games
+    </h2>
+    <span style="color:#666;font-size:0.75rem;letter-spacing:2px;text-transform:uppercase;">{{ posts|length }} found</span>
 </div>
 
 <!-- Posts Grid -->
@@ -56,7 +90,9 @@
 <div class="row g-3">
     {% for post in posts %}
     <div class="col-md-6 col-lg-4">
-        <div class="card h-100 p-3">
+        <div class="card h-100 p-3" style="position:relative;">
+
+            <!-- Top row -->
             <div class="d-flex justify-content-between align-items-start mb-2">
                 <span class="badge {% if post.mode == 'outdoor' %}badge-outdoor{% else %}badge-online{% endif %} px-2 py-1">
                     {% if post.mode == 'outdoor' %}🏏 Outdoor{% else %}🎮 Online{% endif %}
@@ -64,42 +100,68 @@
                 <span class="sport-tag" style="color:#fff;">{{ post.get_sport_display }}</span>
             </div>
 
-            <h5 class="mb-1" style="color:#fff;">{{ post.title }}</h5>
+            <!-- Title -->
+            <h5 style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:1.2rem;text-transform:uppercase;letter-spacing:1px;color:#fff;margin-bottom:8px;">
+                {{ post.title }}
+            </h5>
 
             {% if post.description %}
-            <p class="text-muted small mb-2" style="color:#fff;">{{ post.description|truncatechars:80 }}</p>
+            <p style="color:#666;font-size:0.85rem;margin-bottom:8px;">{{ post.description|truncatechars:70 }}</p>
             {% endif %}
 
+            <!-- Info -->
             <div class="mt-auto">
                 {% if post.mode == 'outdoor' and post.location %}
-                <p class="mb-1 small" style="color:#fff;">📍 {{ post.location }}{% if post.city %}, {{ post.city }}{% endif %}</p>
+                <p style="color:#aaa;font-size:0.8rem;margin-bottom:4px;letter-spacing:1px;">
+                    📍 {{ post.location }}{% if post.city %}, {{ post.city }}{% endif %}
+                </p>
                 {% endif %}
                 {% if post.play_date %}
-                <p class="mb-1 small" style="color:#fff;">📅 {{ post.play_date }}{% if post.play_time %} at {{ post.play_time }}{% endif %}</p>
+                <p style="color:#aaa;font-size:0.8rem;margin-bottom:8px;letter-spacing:1px;">
+                    📅 {{ post.play_date }}{% if post.play_time %} at {{ post.play_time }}{% endif %}
+                </p>
                 {% endif %}
 
-                <div class="d-flex justify-content-between align-items-center mt-2">
-                    <span class="small" style="color:#fff;">
-                        👥 {{ post.players_have }} have &bull; Need {{ post.spots_left }} more
-                    </span>
-                    <span class="small" style="color:#00ff87;">{{ post.get_skill_level_display }}</span>
-                </div>
-
-                <div class="d-flex justify-content-between align-items-center mt-2">
-                    <span class="small" style="color:#888;">by <a href="{% url 'player_profile' post.posted_by.username %}" style="color:#00ff87;text-decoration:none;">{{ post.posted_by.username }}</a></span>
-                    <a href="{% url 'post_detail' post.pk %}" class="btn btn-p1 btn-sm px-3">View →</a>
+                <!-- Bottom row -->
+                <div style="border-top:1px solid #222;padding-top:10px;margin-top:8px;">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <p style="color:#666;font-size:0.7rem;letter-spacing:1px;text-transform:uppercase;margin:0;">Need</p>
+                            <p style="font-family:'Barlow Condensed',sans-serif;font-size:1.3rem;font-weight:900;color:var(--p1-green);margin:0;">
+                                {{ post.spots_left }} Players
+                            </p>
+                        </div>
+                        <div class="text-end">
+                            <p style="color:#666;font-size:0.7rem;letter-spacing:1px;text-transform:uppercase;margin:0;">Level</p>
+                            <p style="font-family:'Barlow Condensed',sans-serif;font-size:0.9rem;font-weight:700;color:#fff;margin:0;">
+                                {{ post.get_skill_level_display }}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mt-2">
+                        <span style="color:#555;font-size:0.75rem;">
+                            by <a href="{% url 'player_profile' post.posted_by.username %}" style="color:#888;text-decoration:none;">{{ post.posted_by.username }}</a>
+                        </span>
+                        <a href="{% url 'post_detail' post.pk %}" class="btn btn-p1 btn-sm px-3">View →</a>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
     {% endfor %}
 </div>
+
 {% else %}
-<div class="text-center py-5">
-    <h3 style="color:#fffefe;">No posts found 😕</h3>
-    <p style="color:#fffefe;">Be the first to post! Let others find you.</p>
+<!-- Empty State -->
+<div style="border:1px solid #222;padding:60px;text-align:center;">
+    <p style="font-family:'Barlow Condensed',sans-serif;font-size:3rem;font-weight:900;color:#222;text-transform:uppercase;letter-spacing:3px;">
+        No Games Found
+    </p>
+    <p style="color:#555;letter-spacing:2px;text-transform:uppercase;font-size:0.8rem;">Be the first to post a game in your area</p>
     {% if user.is_authenticated %}
-    <a href="{% url 'create_post' %}" class="btn btn-p1">➕ Post a Game</a>
+    <a href="{% url 'create_post' %}" class="btn btn-p1 mt-3">+ Post a Game</a>
+    {% else %}
+    <a href="{% url 'register' %}" class="btn btn-p1 mt-3">Join & Post</a>
     {% endif %}
 </div>
 {% endif %}

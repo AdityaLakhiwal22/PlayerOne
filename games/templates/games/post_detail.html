@@ -2,119 +2,147 @@
 {% block title %}{{ post.title }} — Player One{% endblock %}
 
 {% block content %}
-<div class="row">
+
+<!-- Breadcrumb -->
+<p style="color:#555;font-size:0.75rem;letter-spacing:2px;text-transform:uppercase;margin-bottom:24px;">
+    <a href="{% url 'home' %}" style="color:#555;text-decoration:none;">Home</a> / {{ post.get_sport_display }} / {{ post.title }}
+</p>
+
+<div class="row g-4">
+    <!-- Left: Main Content -->
     <div class="col-lg-8">
-        <div class="card p-4 mb-4">
+
+        <!-- Post Header -->
+        <div style="border:1px solid #222;padding:32px;margin-bottom:16px;">
             <div class="d-flex justify-content-between align-items-start mb-3">
-                <span class="badge {% if post.mode == 'outdoor' %}badge-outdoor{% else %}badge-online{% endif %} px-3 py-2 fs-6">
+                <span class="badge {% if post.mode == 'outdoor' %}badge-outdoor{% else %}badge-online{% endif %} px-2 py-1">
                     {% if post.mode == 'outdoor' %}🏏 Outdoor{% else %}🎮 Online{% endif %}
                 </span>
-                <span class="sport-tag fs-6" style="color:#fff;">{{ post.get_sport_display }}</span>
+                <span class="sport-tag" style="color:#fff;">{{ post.get_sport_display }}</span>
             </div>
 
             <div class="d-flex justify-content-between align-items-start">
-                <h2 style="color:#fff;">{{ post.title }}</h2>
+                <h1 style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:clamp(2rem,5vw,3.5rem);text-transform:uppercase;letter-spacing:2px;color:#fff;line-height:1;margin-bottom:12px;">
+                    {{ post.title }}
+                </h1>
                 {% if user == post.posted_by %}
                 <div class="d-flex gap-2 ms-3">
-                    <a href="{% url 'edit_post' post.pk %}" class="btn btn-outline-secondary btn-sm">✏️ Edit</a>
+                    <a href="{% url 'edit_post' post.pk %}" class="btn btn-p1-outline btn-sm">✏️ Edit</a>
                     {% if post.status == 'open' or post.status == 'full' %}
-                    <a href="{% url 'toggle_post' post.pk %}" class="btn btn-outline-warning btn-sm">🔒 Close</a>
+                    <a href="{% url 'toggle_post' post.pk %}" class="btn btn-sm" style="border:1px solid #ffaa00;color:#ffaa00;border-radius:0;font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:1px;text-transform:uppercase;">🔒 Close</a>
                     {% else %}
-                    <a href="{% url 'toggle_post' post.pk %}" class="btn btn-outline-success btn-sm">🔓 Reopen</a>
+                    <a href="{% url 'toggle_post' post.pk %}" class="btn btn-sm" style="border:1px solid var(--p1-green);color:var(--p1-green);border-radius:0;font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:1px;text-transform:uppercase;">🔓 Reopen</a>
                     {% endif %}
                 </div>
                 {% endif %}
             </div>
-            <p style="color:#aaa;">Posted by <a href="{% url 'player_profile' post.posted_by.username %}" style="color:#00ff87;text-decoration:none;">{{ post.posted_by.username }}</a> · {{ post.created_at|timesince }} ago</p>
+
+            <p style="color:#555;font-size:0.8rem;letter-spacing:1px;text-transform:uppercase;">
+                Posted by <a href="{% url 'player_profile' post.posted_by.username %}" style="color:var(--p1-green);text-decoration:none;">{{ post.posted_by.username }}</a>
+                · {{ post.created_at|timesince }} ago
+            </p>
 
             {% if post.description %}
-            <p>{{ post.description }}</p>
+            <p style="color:#aaa;margin-top:16px;padding-top:16px;border-top:1px solid #222;">{{ post.description }}</p>
             {% endif %}
+        </div>
 
-            <hr style="border-color:#2a2a4a;">
-
-            <div class="row g-3">
-                <div class="col-6">
-                    <p class="mb-1 small" style="color:#888;">Players Have</p>
-                    <p class="fw-bold" style="color:#fff;">👥 {{ post.players_have }}</p>
-                </div>
-                <div class="col-6">
-                    <p class="mb-1 small" style="color:#888;">Still Need</p>
-                    <p class="fw-bold" style="color:#00ff87;">
-                        {% if post.is_full %}✅ Full!{% else %}{{ post.spots_left }} more{% endif %}
-                    </p>
-                </div>
-                <div class="col-6">
-                    <p class="mb-1 small" style="color:#888;">Skill Level</p>
-                    <p class="fw-bold" style="color:#fff;">🎯 {{ post.get_skill_level_display }}</p>
-                </div>
-                <div class="col-6">
-                    <p class="mb-1 small" style="color:#888;">Status</p>
-                    <p class="fw-bold" style="color:#fff;">
-                        {% if post.status == 'open' %}<span style="color:#00ff87;">🟢 Open</span>
-                        {% elif post.status == 'full' %}<span style="color:#ffcc00;">🟡 Full</span>
-                        {% else %}<span style="color:#ff6b6b;">🔴 Closed</span>{% endif %}
-                    </p>
-                </div>
-
-                {% if post.mode == 'outdoor' %}
-                {% if post.location %}
-                <div class="col-12">
-                    <p class="mb-1 small" style="color:#888;">📍 Location</p>
-                    <p class="fw-bold" style="color:#fff;">
-                        {{ post.location }}{% if post.city %}, {{ post.city }}{% endif %}
-                        {% if post.map_link %}
-                        <a href="{{ post.map_link }}" target="_blank" class="btn btn-outline-success btn-sm ms-2">📍 Open in Maps</a>
-                        {% endif %}
-                    </p>
-                </div>
-                {% endif %}
-                {% if post.play_date %}
-                <div class="col-6">
-                    <p class="mb-1 small" style="color:#888;">📅 Date</p>
-                    <p class="fw-bold" style="color:#fff;">{{ post.play_date }}</p>
-                </div>
-                {% endif %}
-                {% if post.play_time %}
-                <div class="col-6">
-                    <p class="mb-1 small" style="color:#888;">⏰ Time</p>
-                    <p class="fw-bold" style="color:#fff;">{{ post.play_time }}</p>
-                </div>
-                {% endif %}
-                {% else %}
-                {% if post.game_platform %}
-                <div class="col-6">
-                    <p class="mb-1 small" style="color:#888;">🖥️ Platform</p>
-                    <p class="fw-bold" style="color:#fff;">{{ post.game_platform }}</p>
-                </div>
-                {% endif %}
-                {% if post.game_id %}
-                <div class="col-6">
-                    <p class="mb-1 small" style="color:#888;">🎮 Game ID</p>
-                    <p class="fw-bold" style="color:#fff;">{{ post.game_id }}</p>
-                </div>
-                {% endif %}
-                {% endif %}
+        <!-- Stats Grid -->
+        <div class="row g-0 mb-4" style="border:1px solid #222;">
+            <div class="col-6 col-md-3 text-center py-3" style="border-right:1px solid #222;border-bottom:1px solid #222;">
+                <p style="color:#555;font-size:0.65rem;letter-spacing:2px;text-transform:uppercase;margin:0;">Have</p>
+                <p style="font-family:'Barlow Condensed',sans-serif;font-size:2rem;font-weight:900;color:#fff;margin:0;">{{ post.players_have }}</p>
+            </div>
+            <div class="col-6 col-md-3 text-center py-3" style="border-right:1px solid #222;border-bottom:1px solid #222;">
+                <p style="color:#555;font-size:0.65rem;letter-spacing:2px;text-transform:uppercase;margin:0;">Need</p>
+                <p style="font-family:'Barlow Condensed',sans-serif;font-size:2rem;font-weight:900;color:var(--p1-green);margin:0;">
+                    {% if post.is_full %}✅{% else %}{{ post.spots_left }}{% endif %}
+                </p>
+            </div>
+            <div class="col-6 col-md-3 text-center py-3" style="border-right:1px solid #222;">
+                <p style="color:#555;font-size:0.65rem;letter-spacing:2px;text-transform:uppercase;margin:0;">Level</p>
+                <p style="font-family:'Barlow Condensed',sans-serif;font-size:1.3rem;font-weight:900;color:#fff;margin:0;">{{ post.get_skill_level_display }}</p>
+            </div>
+            <div class="col-6 col-md-3 text-center py-3">
+                <p style="color:#555;font-size:0.65rem;letter-spacing:2px;text-transform:uppercase;margin:0;">Status</p>
+                <p style="font-family:'Barlow Condensed',sans-serif;font-size:1.3rem;font-weight:900;margin:0;
+                    {% if post.status == 'open' %}color:var(--p1-green);
+                    {% elif post.status == 'full' %}color:#ffaa00;
+                    {% else %}color:#ff4444;{% endif %}">
+                    {{ post.get_status_display|upper }}
+                </p>
             </div>
         </div>
 
+        <!-- Location / Game Info -->
+        {% if post.mode == 'outdoor' and post.location %}
+        <div style="border:1px solid #222;padding:20px;margin-bottom:16px;">
+            <p style="color:#555;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;">📍 Location</p>
+            <p style="font-family:'Barlow Condensed',sans-serif;font-size:1.3rem;font-weight:800;color:#fff;text-transform:uppercase;margin:0;">
+                {{ post.location }}{% if post.city %}, {{ post.city }}{% endif %}
+            </p>
+            {% if post.map_link %}
+            <a href="{{ post.map_link }}" target="_blank" class="btn btn-p1-outline btn-sm mt-3">📍 Open in Google Maps</a>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        {% if post.play_date or post.play_time %}
+        <div class="row g-0 mb-4" style="border:1px solid #222;">
+            {% if post.play_date %}
+            <div class="col-6 p-3" style="border-right:1px solid #222;">
+                <p style="color:#555;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase;margin:0;">📅 Date</p>
+                <p style="font-family:'Barlow Condensed',sans-serif;font-size:1.2rem;font-weight:800;color:#fff;margin:0;">{{ post.play_date }}</p>
+            </div>
+            {% endif %}
+            {% if post.play_time %}
+            <div class="col-6 p-3">
+                <p style="color:#555;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase;margin:0;">⏰ Time</p>
+                <p style="font-family:'Barlow Condensed',sans-serif;font-size:1.2rem;font-weight:800;color:#fff;margin:0;">{{ post.play_time }}</p>
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        {% if post.mode == 'online' %}
+        <div class="row g-0 mb-4" style="border:1px solid #222;">
+            {% if post.game_platform %}
+            <div class="col-6 p-3" style="border-right:1px solid #222;">
+                <p style="color:#555;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase;margin:0;">🖥️ Platform</p>
+                <p style="font-family:'Barlow Condensed',sans-serif;font-size:1.2rem;font-weight:800;color:#fff;margin:0;">{{ post.game_platform }}</p>
+            </div>
+            {% endif %}
+            {% if post.game_id %}
+            <div class="col-6 p-3">
+                <p style="color:#555;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase;margin:0;">🎮 Game ID</p>
+                <p style="font-family:'Barlow Condensed',sans-serif;font-size:1.2rem;font-weight:800;color:#fff;margin:0;">{{ post.game_id }}</p>
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+
         <!-- Comments -->
-        <div class="card p-4 mb-4">
-            <h5 style="color:#00ff87;">💬 Comments ({{ post.comments.count }})</h5>
-            <hr style="border-color:#2a2a4a;">
+        <div style="border:1px solid #222;padding:24px;margin-bottom:16px;">
+            <h4 style="font-family:'Barlow Condensed',sans-serif;font-weight:900;letter-spacing:3px;text-transform:uppercase;color:var(--p1-green);margin-bottom:20px;">
+                💬 Comments ({{ post.comments.count }})
+            </h4>
 
             {% for comment in post.comments.all %}
-            <div class="mb-3">
-                <strong style="color:#00ff87;">{{ comment.author.username }}</strong>
-                <span class="text-muted small ms-2">{{ comment.created_at|timesince }} ago</span>
-                <p class="mb-0 mt-1">{{ comment.text }}</p>
+            <div style="border-bottom:1px solid #1a1a1a;padding-bottom:12px;margin-bottom:12px;">
+                <div class="d-flex justify-content-between">
+                    <strong style="color:var(--p1-green);font-family:'Barlow Condensed',sans-serif;letter-spacing:1px;text-transform:uppercase;">
+                        {{ comment.author.username }}
+                    </strong>
+                    <span style="color:#444;font-size:0.75rem;">{{ comment.created_at|timesince }} ago</span>
+                </div>
+                <p style="color:#aaa;margin:4px 0 0 0;">{{ comment.text }}</p>
             </div>
             {% empty %}
-            <p style="color:#fff;">No comments yet. Be the first!</p>
+            <p style="color:#444;letter-spacing:1px;text-transform:uppercase;font-size:0.8rem;">No comments yet. Be the first!</p>
             {% endfor %}
 
             {% if user.is_authenticated %}
-            <form method="post" class="mt-3">
+            <form method="post" class="mt-4">
                 {% csrf_token %}
                 <div class="input-group">
                     {{ comment_form.text }}
@@ -126,15 +154,17 @@
 
         <!-- Rate Players -->
         {% if user.is_authenticated %}
-        <div class="card p-3 mb-4">
-            <h6 style="color:#00ff87;">⭐ Rate Players</h6>
-            <hr style="border-color:#2a2a4a;">
-
+        <div style="border:1px solid #222;padding:24px;margin-bottom:16px;">
+            <h4 style="font-family:'Barlow Condensed',sans-serif;font-weight:900;letter-spacing:3px;text-transform:uppercase;color:var(--p1-green);margin-bottom:16px;">
+                ⭐ Rate Players
+            </h4>
             {% for jr in post.join_requests.all %}
             {% if jr.player == user and jr.status == 'accepted' %}
-            <div class="d-flex justify-content-between align-items-center mt-2">
-                <a href="{% url 'player_profile' post.posted_by.username %}" style="color:#fff;text-decoration:none;">{{ post.posted_by.username }} (organizer)</a>
-                <a href="{% url 'rate_player' post.posted_by.username post.pk %}" class="btn btn-outline-warning btn-sm">⭐ Rate</a>
+            <div class="d-flex justify-content-between align-items-center py-2" style="border-bottom:1px solid #1a1a1a;">
+                <a href="{% url 'player_profile' post.posted_by.username %}" style="color:#fff;text-decoration:none;font-family:'Barlow Condensed',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:1px;">
+                    {{ post.posted_by.username }} <span style="color:#555;">(organizer)</span>
+                </a>
+                <a href="{% url 'rate_player' post.posted_by.username post.pk %}" class="btn btn-p1 btn-sm">⭐ Rate</a>
             </div>
             {% endif %}
             {% endfor %}
@@ -142,9 +172,11 @@
             {% if user == post.posted_by %}
             {% for jr in post.join_requests.all %}
             {% if jr.status == 'accepted' %}
-            <div class="d-flex justify-content-between align-items-center mt-2">
-                <a href="{% url 'player_profile' jr.player.username %}" style="color:#fff;text-decoration:none;">{{ jr.player.username }}</a>
-                <a href="{% url 'rate_player' jr.player.username post.pk %}" class="btn btn-outline-warning btn-sm">⭐ Rate</a>
+            <div class="d-flex justify-content-between align-items-center py-2" style="border-bottom:1px solid #1a1a1a;">
+                <a href="{% url 'player_profile' jr.player.username %}" style="color:#fff;text-decoration:none;font-family:'Barlow Condensed',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:1px;">
+                    {{ jr.player.username }}
+                </a>
+                <a href="{% url 'rate_player' jr.player.username post.pk %}" class="btn btn-p1 btn-sm">⭐ Rate</a>
             </div>
             {% endif %}
             {% endfor %}
@@ -154,18 +186,26 @@
 
     </div>
 
-    <!-- Sidebar -->
+    <!-- Right: Sidebar -->
     <div class="col-lg-4">
-        {% if user.is_authenticated and user != post.posted_by and post.status == 'open' %}
-        <div class="card p-4 mb-4">
-            <h5 style="color:#00ff87;">🙋 Want to Join?</h5>
 
+        <!-- Join Card -->
+        {% if user.is_authenticated and user != post.posted_by and post.status == 'open' %}
+        <div style="border:1px solid var(--p1-green);padding:24px;margin-bottom:16px;">
+            <h4 style="font-family:'Barlow Condensed',sans-serif;font-weight:900;letter-spacing:3px;text-transform:uppercase;color:var(--p1-green);margin-bottom:16px;">
+                🙋 Want to Join?
+            </h4>
             {% if user_request %}
-            <div class="alert
-                {% if user_request.status == 'accepted' %}alert-success
-                {% elif user_request.status == 'rejected' %}alert-danger
-                {% else %}alert-warning{% endif %}">
-                Your request is <strong>{{ user_request.get_status_display }}</strong>
+            <div style="padding:12px;border:1px solid
+                {% if user_request.status == 'accepted' %}var(--p1-green)
+                {% elif user_request.status == 'rejected' %}#ff4444
+                {% else %}#ffaa00{% endif %};">
+                <p style="font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin:0;
+                    {% if user_request.status == 'accepted' %}color:var(--p1-green);
+                    {% elif user_request.status == 'rejected' %}color:#ff4444;
+                    {% else %}color:#ffaa00;{% endif %}">
+                    Request {{ user_request.get_status_display|upper }}
+                </p>
             </div>
             {% else %}
             <form method="post">
@@ -174,32 +214,45 @@
                     <label class="form-label">Message (optional)</label>
                     {{ join_form.message }}
                 </div>
-                <button type="submit" name="join" class="btn btn-p1 w-100">Send Join Request 🚀</button>
+                <button type="submit" name="join" class="btn btn-p1 w-100">Send Request 🚀</button>
             </form>
             {% endif %}
         </div>
         {% endif %}
 
+        {% if not user.is_authenticated %}
+        <div style="border:1px solid #222;padding:24px;margin-bottom:16px;text-align:center;">
+            <p style="color:#555;letter-spacing:1px;text-transform:uppercase;font-size:0.8rem;">Login to join this game</p>
+            <a href="{% url 'login' %}" class="btn btn-p1 w-100">🔑 Login</a>
+        </div>
+        {% endif %}
+
+        <!-- Join Requests (owner only) -->
         {% if join_requests %}
-        <div class="card p-4">
-            <h5 style="color:#00ff87;">📥 Join Requests ({{ join_requests.count }})</h5>
-            <hr style="border-color:#2a2a4a;">
+        <div style="border:1px solid #222;padding:24px;margin-bottom:16px;">
+            <h5 style="font-family:'Barlow Condensed',sans-serif;font-weight:900;letter-spacing:2px;text-transform:uppercase;color:var(--p1-green);margin-bottom:16px;">
+                📥 Requests ({{ join_requests.count }})
+            </h5>
             {% for jr in join_requests %}
-            <div class="mb-3 p-2" style="background:#0d0d0d; border-radius:8px;">
-                <a href="{% url 'player_profile' jr.player.username %}" style="color:#fff;text-decoration:none;font-weight:bold;">{{ jr.player.username }}</a>
-                <span class="badge
-                    {% if jr.status == 'accepted' %}bg-success
-                    {% elif jr.status == 'rejected' %}bg-danger
-                    {% else %}bg-warning text-dark{% endif %} ms-2">
-                    {{ jr.get_status_display }}
-                </span>
+            <div style="background:#0a0a0a;padding:12px;margin-bottom:8px;border:1px solid #1a1a1a;">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                    <a href="{% url 'player_profile' jr.player.username %}" style="color:#fff;text-decoration:none;font-family:'Barlow Condensed',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:1px;">
+                        {{ jr.player.username }}
+                    </a>
+                    <span style="font-family:'Barlow Condensed',sans-serif;font-size:0.75rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+                        {% if jr.status == 'accepted' %}color:var(--p1-green);
+                        {% elif jr.status == 'rejected' %}color:#ff4444;
+                        {% else %}color:#ffaa00;{% endif %}">
+                        {{ jr.get_status_display|upper }}
+                    </span>
+                </div>
                 {% if jr.message %}
-                <p class="small text-muted mt-1 mb-2">{{ jr.message }}</p>
+                <p style="color:#555;font-size:0.8rem;margin:4px 0;">{{ jr.message }}</p>
                 {% endif %}
                 {% if jr.status == 'pending' %}
-                <div class="d-flex gap-2">
-                    <a href="{% url 'manage_request' jr.pk 'accept' %}" class="btn btn-success btn-sm">✅ Accept</a>
-                    <a href="{% url 'manage_request' jr.pk 'reject' %}" class="btn btn-danger btn-sm">❌ Reject</a>
+                <div class="d-flex gap-2 mt-2">
+                    <a href="{% url 'manage_request' jr.pk 'accept' %}" class="btn btn-p1 btn-sm flex-grow-1">✅ Accept</a>
+                    <a href="{% url 'manage_request' jr.pk 'reject' %}" class="btn btn-sm flex-grow-1" style="border:1px solid #ff4444;color:#ff4444;border-radius:0;font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:1px;text-transform:uppercase;">❌ Reject</a>
                 </div>
                 {% endif %}
             </div>
@@ -207,14 +260,9 @@
         </div>
         {% endif %}
 
-        {% if not user.is_authenticated %}
-        <div class="card p-4">
-            <p class="text-muted text-center">Login to join this game!</p>
-            <a href="{% url 'login' %}" class="btn btn-p1 w-100">🔑 Login</a>
-        </div>
-        {% endif %}
     </div>
 </div>
 
-<a href="{% url 'home' %}" class="btn btn-outline-secondary mt-3">← Back to Home</a>
+<a href="{% url 'home' %}" class="btn btn-p1-outline mt-3">← Back to Home</a>
+
 {% endblock %}
