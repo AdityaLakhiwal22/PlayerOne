@@ -2,35 +2,61 @@
 {% block title %}Notifications — Player One{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-7">
-        <h3 style="color:#00ff87;" class="mb-4">🔔 Notifications</h3>
 
-        {% if notifs %}
-        <div class="d-flex flex-column gap-3">
-            {% for notif in notifs %}
-            <div class="card p-3 d-flex flex-row align-items-center gap-3"
-                style="{% if not notif.is_read %}border-color:#00ff87;{% endif %}">
-                <div style="font-size:1.5rem;">
-                    {% if 'accepted' in notif.message %}🎉
-                    {% elif 'wants to join' in notif.message %}🙋
-                    {% else %}📢{% endif %}
-                </div>
-                <div class="flex-grow-1">
-                    <p class="mb-0" style="color:#fff;">{{ notif.message }}</p>
-                    <p class="mb-0 small" style="color:#888;">{{ notif.created_at|timesince }} ago</p>
-                </div>
-                {% if notif.link %}
-                <a href="{{ notif.link }}" class="btn btn-p1 btn-sm">View</a>
+<!-- Header -->
+<div style="border-bottom:1px solid #222;padding-bottom:20px;margin-bottom:32px;">
+    <p style="color:#555;font-size:0.75rem;letter-spacing:3px;text-transform:uppercase;margin:0;">
+        <a href="{% url 'home' %}" style="color:#555;text-decoration:none;">Home</a> / Notifications
+    </p>
+    <h1 style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:3rem;text-transform:uppercase;letter-spacing:2px;color:#fff;margin:8px 0 0 0;">
+        🔔 Notifications
+    </h1>
+</div>
+
+{% if notifs %}
+<div class="d-flex flex-column gap-2">
+    {% for notif in notifs %}
+    <div style="border:1px solid {% if not notif.is_read %}var(--p1-green){% else %}#222{% endif %};padding:20px;display:flex;align-items:center;gap:16px;">
+
+        <!-- Icon -->
+        <div style="font-size:1.8rem;min-width:40px;text-align:center;">
+            {% if 'accepted' in notif.message %}🎉
+            {% elif 'wants to join' in notif.message %}🙋
+            {% elif 'rated' in notif.message %}⭐
+            {% else %}📢{% endif %}
+        </div>
+
+        <!-- Message -->
+        <div style="flex-grow:1;">
+            <p style="color:#fff;margin:0;font-size:0.95rem;">{{ notif.message }}</p>
+            <p style="color:#444;font-size:0.7rem;letter-spacing:1px;text-transform:uppercase;margin:4px 0 0 0;">
+                {{ notif.created_at|timesince }} ago
+                {% if not notif.is_read %}
+                <span style="color:var(--p1-green);margin-left:8px;">● New</span>
                 {% endif %}
-            </div>
-            {% endfor %}
+            </p>
         </div>
-        {% else %}
-        <div class="card p-4 text-center">
-            <p style="color:#888;">No notifications yet. 🔕</p>
-        </div>
+
+        <!-- Action -->
+        {% if notif.link %}
+        <a href="{{ notif.link }}" class="btn btn-p1 btn-sm" style="letter-spacing:1px;white-space:nowrap;">
+            View →
+        </a>
         {% endif %}
     </div>
+    {% endfor %}
 </div>
+
+{% else %}
+<div style="border:1px solid #222;padding:80px;text-align:center;">
+    <p style="font-size:3rem;margin:0;">🔕</p>
+    <p style="font-family:'Barlow Condensed',sans-serif;font-size:2rem;font-weight:900;color:#222;text-transform:uppercase;letter-spacing:3px;margin:8px 0 0 0;">
+        No Notifications
+    </p>
+    <p style="color:#444;font-size:0.75rem;letter-spacing:2px;text-transform:uppercase;margin:8px 0 0 0;">
+        You're all caught up!
+    </p>
+</div>
+{% endif %}
+
 {% endblock %}
