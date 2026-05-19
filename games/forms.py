@@ -43,7 +43,7 @@ class GamePostForm(forms.ModelForm):
             'mode', 'sport', 'title', 'description',
             'players_have', 'players_needed', 'skill_level',
             'location', 'city', 'play_date', 'play_time',
-            'game_platform', 'game_id','map_link',
+            'game_platform', 'game_id', 'map_link', 'whatsapp_link',
         ]
         widgets = {
             'mode': forms.Select(attrs=BS_SELECT),
@@ -60,6 +60,7 @@ class GamePostForm(forms.ModelForm):
             'game_platform': forms.TextInput(attrs={**BS, 'placeholder': 'e.g. Mobile, PC'}),
             'game_id': forms.TextInput(attrs={**BS, 'placeholder': 'Your in-game ID'}),
             'map_link': forms.URLInput(attrs={**BS, 'placeholder': 'https://maps.google.com/...'}),
+            'whatsapp_link': forms.URLInput(attrs={**BS, 'placeholder': 'https://chat.whatsapp.com/...'}),
         }
 
 

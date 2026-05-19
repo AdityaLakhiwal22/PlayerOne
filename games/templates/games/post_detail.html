@@ -84,6 +84,15 @@
             {% if post.map_link %}
             <a href="{{ post.map_link }}" target="_blank" class="btn btn-p1-outline btn-sm mt-3">📍 Open in Google Maps</a>
             {% endif %}
+            {% if post.whatsapp_link and user.is_authenticated %}
+            {% for jr in post.join_requests.all %}
+            {% if jr.player == user and jr.status == 'accepted' or user == post.posted_by %}
+            <a href="{{ post.whatsapp_link }}" target="_blank" class="btn btn-sm mt-2" style="background:#25D366;color:#fff;border-radius:0;font-family:'Barlow Condensed',sans-serif;font-weight:800;letter-spacing:2px;text-transform:uppercase;padding:10px 20px;border:none;">
+                💬 Join WhatsApp Group
+            </a>
+            {% endif %}
+            {% endfor %}
+            {% endif %}
         </div>
         {% endif %}
 
