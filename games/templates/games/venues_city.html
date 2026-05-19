@@ -2,50 +2,63 @@
 {% block title %}{{ city }} Venues — Player One{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <div>
-        <a href="{% url 'venues_home' %}" style="color:#888;text-decoration:none;">🏟️ Venues</a>
-        <span style="color:#888;"> / </span>
-        <h2 style="color:#00ff87;" class="d-inline">{{ city }}</h2>
-    </div>
-    {% if user.is_authenticated %}
-    <a href="{% url 'add_venue' %}" class="btn btn-p1">➕ Add Venue</a>
-    {% endif %}
-</div>
 
-<div class="row g-2 mb-4">
-    <div class="col-6">
-        <div class="card p-3 text-center">
-            <p style="color:#00ff87;font-size:1.5rem;font-weight:800;" class="mb-0">{{ grounds_count }}</p>
-            <p style="color:#888;" class="small mb-0">🏏 Grounds</p>
-        </div>
-    </div>
-    <div class="col-6">
-        <div class="card p-3 text-center">
-            <p style="color:#00ff87;font-size:1.5rem;font-weight:800;" class="mb-0">{{ turfs_count }}</p>
-            <p style="color:#888;" class="small mb-0">⚽ Turfs</p>
-        </div>
+<div style="border-bottom:1px solid #222;padding-bottom:20px;margin-bottom:32px;">
+    <p style="color:#555;font-size:0.75rem;letter-spacing:3px;text-transform:uppercase;margin:0;">
+        <a href="{% url 'home' %}" style="color:#555;text-decoration:none;">Home</a> /
+        <a href="{% url 'venues_home' %}" style="color:#555;text-decoration:none;">Venues</a> /
+        {{ city }}
+    </p>
+    <div class="d-flex justify-content-between align-items-end">
+        <h1 style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:3rem;text-transform:uppercase;letter-spacing:2px;color:#fff;margin:8px 0 0 0;">
+            📍 {{ city }}
+        </h1>
+        {% if user.is_authenticated %}
+        <a href="{% url 'add_venue' %}" class="btn btn-p1" style="letter-spacing:2px;">+ Add Venue</a>
+        {% endif %}
     </div>
 </div>
 
-<h5 style="color:#fff;" class="mb-3">📍 Browse by Area</h5>
+<!-- Stats -->
+<div class="row g-0 mb-4" style="border:1px solid #222;">
+    <div class="col-6 text-center py-3" style="border-right:1px solid #222;">
+        <p style="font-family:'Barlow Condensed',sans-serif;font-size:2rem;font-weight:900;color:var(--p1-green);margin:0;">{{ grounds_count }}</p>
+        <p style="color:#555;font-size:0.65rem;letter-spacing:2px;text-transform:uppercase;margin:0;">🏏 Grounds</p>
+    </div>
+    <div class="col-6 text-center py-3">
+        <p style="font-family:'Barlow Condensed',sans-serif;font-size:2rem;font-weight:900;color:var(--p1-green);margin:0;">{{ turfs_count }}</p>
+        <p style="color:#555;font-size:0.65rem;letter-spacing:2px;text-transform:uppercase;margin:0;">⚽ Turfs</p>
+    </div>
+</div>
+
+<div style="border-bottom:1px solid #222;padding-bottom:12px;margin-bottom:20px;">
+    <h4 style="font-family:'Barlow Condensed',sans-serif;font-weight:900;letter-spacing:3px;text-transform:uppercase;color:#fff;margin:0;">
+        — Browse by Area
+    </h4>
+</div>
+
 {% if areas %}
-<div class="row g-3">
+<div class="row g-2">
     {% for area in areas %}
     <div class="col-md-3 col-6">
         <a href="{% url 'venues_area' city area %}" style="text-decoration:none;">
-            <div class="card p-3 text-center" style="cursor:pointer;">
-                <div style="font-size:1.5rem;">📍</div>
-                <h6 style="color:#fff;" class="mt-2 mb-0">{{ area }}</h6>
+            <div style="border:1px solid #222;padding:24px;text-align:center;cursor:pointer;" onmouseover="this.style.borderColor='var(--p1-green)'" onmouseout="this.style.borderColor='#222'">
+                <p style="font-size:1.5rem;margin:0;">📍</p>
+                <h5 style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:1.2rem;text-transform:uppercase;letter-spacing:1px;color:#fff;margin:8px 0 0 0;">
+                    {{ area }}
+                </h5>
             </div>
         </a>
     </div>
     {% endfor %}
 </div>
 {% else %}
-<div class="card p-4 text-center">
-    <p style="color:#888;">No venues in {{ city }} yet.</p>
-    <a href="{% url 'add_venue' %}" class="btn btn-p1">➕ Add one!</a>
+<div style="border:1px solid #222;padding:60px;text-align:center;">
+    <p style="font-family:'Barlow Condensed',sans-serif;font-size:2rem;font-weight:900;color:#222;text-transform:uppercase;letter-spacing:3px;margin:0;">
+        No Venues in {{ city }}
+    </p>
+    <a href="{% url 'add_venue' %}" class="btn btn-p1 mt-3">+ Add One!</a>
 </div>
 {% endif %}
+
 {% endblock %}

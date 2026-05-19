@@ -2,90 +2,111 @@
 {% block title %}{{ area }}, {{ city }} — Player One{% endblock %}
 
 {% block content %}
-<div class="mb-4">
-    <a href="{% url 'venues_home' %}" style="color:#888;text-decoration:none;">🏟️ Venues</a>
-    <span style="color:#888;"> / </span>
-    <a href="{% url 'venues_city' city %}" style="color:#888;text-decoration:none;">{{ city }}</a>
-    <span style="color:#888;"> / </span>
-    <span style="color:#00ff87;">{{ area }}</span>
+
+<div style="border-bottom:1px solid #222;padding-bottom:20px;margin-bottom:32px;">
+    <p style="color:#555;font-size:0.75rem;letter-spacing:3px;text-transform:uppercase;margin:0;">
+        <a href="{% url 'venues_home' %}" style="color:#555;text-decoration:none;">Venues</a> /
+        <a href="{% url 'venues_city' city %}" style="color:#555;text-decoration:none;">{{ city }}</a> /
+        {{ area }}
+    </p>
+    <h1 style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:3rem;text-transform:uppercase;letter-spacing:2px;color:#fff;margin:8px 0 0 0;">
+        📍 {{ area }}
+    </h1>
 </div>
 
 <!-- Grounds -->
-<div class="mb-5">
-    <h4 style="color:#fff;" class="mb-3">🏏 Grounds ({{ grounds.count }})</h4>
-    {% if grounds %}
-    <div class="row g-3">
-        {% for venue in grounds %}
-        <div class="col-md-6">
-            <div class="card p-3">
-                {% if venue.image1 %}
-                <img src="{{ venue.image1.url }}" class="w-100 mb-3 rounded" style="height:160px;object-fit:cover;">
-                {% endif %}
-                <div class="d-flex justify-content-between align-items-start">
-                    <h6 style="color:#fff;">{{ venue.name }}</h6>
+<div style="border-bottom:1px solid #222;padding-bottom:12px;margin-bottom:20px;" class="d-flex justify-content-between">
+    <h4 style="font-family:'Barlow Condensed',sans-serif;font-weight:900;letter-spacing:3px;text-transform:uppercase;color:#fff;margin:0;">
+        — 🏏 Grounds
+    </h4>
+    <span style="color:#555;font-size:0.75rem;letter-spacing:2px;text-transform:uppercase;">{{ grounds.count }} found</span>
+</div>
+
+{% if grounds %}
+<div class="row g-3 mb-5">
+    {% for venue in grounds %}
+    <div class="col-md-6">
+        <div style="border:1px solid #222;padding:0;overflow:hidden;">
+            {% if venue.image1 %}
+            <img src="{{ venue.image1.url }}" style="width:100%;height:160px;object-fit:cover;">
+            {% endif %}
+            <div style="padding:20px;">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <h5 style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:1.2rem;text-transform:uppercase;letter-spacing:1px;color:#fff;margin:0;">
+                        {{ venue.name }}
+                    </h5>
                     {% if venue.is_verified %}
-                    <span class="badge bg-success">✅ Verified</span>
+                    <span style="color:var(--p1-green);font-size:0.7rem;letter-spacing:1px;text-transform:uppercase;font-family:'Barlow Condensed',sans-serif;font-weight:700;">✅ Verified</span>
                     {% endif %}
                 </div>
-                <p style="color:#888;" class="small mb-1">⚽ {{ venue.get_sports_display }}</p>
-                {% if venue.entry_fee %}<p style="color:#aaa;" class="small mb-1">💰 {{ venue.entry_fee }}</p>{% endif %}
-                {% if venue.opening_hours %}<p style="color:#aaa;" class="small mb-1">⏰ {{ venue.opening_hours }}</p>{% endif %}
-                <div class="d-flex gap-2 mt-2">
-                    <a href="{% url 'venue_detail' venue.pk %}" class="btn btn-p1 btn-sm">View →</a>
+                <p style="color:#555;font-size:0.75rem;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">⚽ {{ venue.get_sports_display }}</p>
+                {% if venue.entry_fee %}<p style="color:#888;font-size:0.8rem;margin-bottom:4px;">💰 {{ venue.entry_fee }}</p>{% endif %}
+                {% if venue.opening_hours %}<p style="color:#888;font-size:0.8rem;margin-bottom:12px;">⏰ {{ venue.opening_hours }}</p>{% endif %}
+                <div class="d-flex gap-2">
+                    <a href="{% url 'venue_detail' venue.pk %}" class="btn btn-p1 btn-sm" style="letter-spacing:1px;">View →</a>
                     {% if venue.map_link %}
-                    <a href="{{ venue.map_link }}" target="_blank" class="btn btn-outline-success btn-sm">📍 Maps</a>
+                    <a href="{{ venue.map_link }}" target="_blank" class="btn btn-p1-outline btn-sm" style="letter-spacing:1px;">📍 Maps</a>
                     {% endif %}
                 </div>
             </div>
         </div>
-        {% endfor %}
     </div>
-    {% else %}
-    <div class="card p-3 text-center">
-        <p style="color:#888;" class="mb-0">No grounds listed in {{ area }} yet.</p>
-    </div>
-    {% endif %}
+    {% endfor %}
 </div>
+{% else %}
+<div style="border:1px solid #222;padding:40px;text-align:center;margin-bottom:32px;">
+    <p style="color:#333;font-family:'Barlow Condensed',sans-serif;font-size:1.5rem;font-weight:900;text-transform:uppercase;letter-spacing:2px;margin:0;">No Grounds Listed</p>
+</div>
+{% endif %}
 
 <!-- Turfs -->
-<div class="mb-4">
-    <h4 style="color:#fff;" class="mb-3">⚽ Turfs ({{ turfs.count }})</h4>
-    {% if turfs %}
-    <div class="row g-3">
-        {% for venue in turfs %}
-        <div class="col-md-6">
-            <div class="card p-3">
-                {% if venue.image1 %}
-                <img src="{{ venue.image1.url }}" class="w-100 mb-3 rounded" style="height:160px;object-fit:cover;">
-                {% endif %}
-                <div class="d-flex justify-content-between align-items-start">
-                    <h6 style="color:#fff;">{{ venue.name }}</h6>
+<div style="border-bottom:1px solid #222;padding-bottom:12px;margin-bottom:20px;" class="d-flex justify-content-between">
+    <h4 style="font-family:'Barlow Condensed',sans-serif;font-weight:900;letter-spacing:3px;text-transform:uppercase;color:#fff;margin:0;">
+        — ⚽ Turfs
+    </h4>
+    <span style="color:#555;font-size:0.75rem;letter-spacing:2px;text-transform:uppercase;">{{ turfs.count }} found</span>
+</div>
+
+{% if turfs %}
+<div class="row g-3 mb-4">
+    {% for venue in turfs %}
+    <div class="col-md-6">
+        <div style="border:1px solid #222;padding:0;overflow:hidden;">
+            {% if venue.image1 %}
+            <img src="{{ venue.image1.url }}" style="width:100%;height:160px;object-fit:cover;">
+            {% endif %}
+            <div style="padding:20px;">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <h5 style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:1.2rem;text-transform:uppercase;letter-spacing:1px;color:#fff;margin:0;">
+                        {{ venue.name }}
+                    </h5>
                     {% if venue.is_verified %}
-                    <span class="badge bg-success">✅ Verified</span>
+                    <span style="color:var(--p1-green);font-size:0.7rem;letter-spacing:1px;text-transform:uppercase;font-family:'Barlow Condensed',sans-serif;font-weight:700;">✅ Verified</span>
                     {% endif %}
                 </div>
-                <p style="color:#888;" class="small mb-1">⚽ {{ venue.get_sports_display }}</p>
-                {% if venue.price_per_hour %}<p style="color:#aaa;" class="small mb-1">💰 {{ venue.price_per_hour }}</p>{% endif %}
-                {% if venue.opening_hours %}<p style="color:#aaa;" class="small mb-1">⏰ {{ venue.opening_hours }}</p>{% endif %}
-                {% if venue.contact %}<p style="color:#aaa;" class="small mb-1">📞 {{ venue.contact }}</p>{% endif %}
-                <div class="d-flex gap-2 mt-2">
-                    <a href="{% url 'venue_detail' venue.pk %}" class="btn btn-p1 btn-sm">View →</a>
+                <p style="color:#555;font-size:0.75rem;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">⚽ {{ venue.get_sports_display }}</p>
+                {% if venue.price_per_hour %}<p style="color:#888;font-size:0.8rem;margin-bottom:4px;">💰 {{ venue.price_per_hour }}</p>{% endif %}
+                {% if venue.opening_hours %}<p style="color:#888;font-size:0.8rem;margin-bottom:4px;">⏰ {{ venue.opening_hours }}</p>{% endif %}
+                {% if venue.contact %}<p style="color:#888;font-size:0.8rem;margin-bottom:12px;">📞 {{ venue.contact }}</p>{% endif %}
+                <div class="d-flex gap-2">
+                    <a href="{% url 'venue_detail' venue.pk %}" class="btn btn-p1 btn-sm" style="letter-spacing:1px;">View →</a>
                     {% if venue.map_link %}
-                    <a href="{{ venue.map_link }}" target="_blank" class="btn btn-outline-success btn-sm">📍 Maps</a>
+                    <a href="{{ venue.map_link }}" target="_blank" class="btn btn-p1-outline btn-sm" style="letter-spacing:1px;">📍 Maps</a>
                     {% endif %}
                 </div>
             </div>
         </div>
-        {% endfor %}
     </div>
-    {% else %}
-    <div class="card p-3 text-center">
-        <p style="color:#888;" class="mb-0">No turfs listed in {{ area }} yet.</p>
-    </div>
-    {% endif %}
+    {% endfor %}
 </div>
+{% else %}
+<div style="border:1px solid #222;padding:40px;text-align:center;margin-bottom:32px;">
+    <p style="color:#333;font-family:'Barlow Condensed',sans-serif;font-size:1.5rem;font-weight:900;text-transform:uppercase;letter-spacing:2px;margin:0;">No Turfs Listed</p>
+</div>
+{% endif %}
 
 {% if user.is_authenticated %}
-<a href="{% url 'add_venue' %}" class="btn btn-p1">➕ Add a Venue in {{ area }}</a>
+<a href="{% url 'add_venue' %}" class="btn btn-p1" style="letter-spacing:2px;">+ Add a Venue in {{ area }}</a>
 {% endif %}
+
 {% endblock %}

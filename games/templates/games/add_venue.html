@@ -2,14 +2,27 @@
 {% block title %}Add Venue — Player One{% endblock %}
 
 {% block content %}
+
 <div class="row justify-content-center">
     <div class="col-md-8">
-        <div class="card p-4">
-            <h2 style="color:#00ff87;" class="mb-1">🏟️ Add a Venue</h2>
-            <p style="color:#888;" class="mb-4">Add a ground or turf so others can find it!</p>
 
-            <form method="post" enctype="multipart/form-data">
-                {% csrf_token %}
+        <div style="border-bottom:1px solid #222;padding-bottom:20px;margin-bottom:32px;">
+            <p style="color:#555;font-size:0.75rem;letter-spacing:3px;text-transform:uppercase;margin:0;">
+                <a href="{% url 'venues_home' %}" style="color:#555;text-decoration:none;">Venues</a> / Add
+            </p>
+            <h1 style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:3rem;text-transform:uppercase;letter-spacing:2px;color:#fff;margin:8px 0 0 0;">
+                🏟️ Add a Venue
+            </h1>
+            <p style="color:#555;font-size:0.75rem;letter-spacing:2px;text-transform:uppercase;margin:4px 0 0 0;">
+                Add a ground or turf so others can find it!
+            </p>
+        </div>
+
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div style="border:1px solid #222;padding:24px;margin-bottom:2px;">
+                <p style="color:#555;font-size:0.7rem;letter-spacing:3px;text-transform:uppercase;margin-bottom:16px;">01 — Basic Info</p>
                 <div class="row g-3">
                     <div class="col-md-8">
                         <label class="form-label">Venue Name *</label>
@@ -31,36 +44,49 @@
                         <label class="form-label">Address</label>
                         {{ form.address }}
                     </div>
-                    <div class="col-12">
-                        <label class="form-label">Google Maps Link</label>
-                        {{ form.map_link }}
-                    </div>
+                </div>
+            </div>
+
+            <div style="border:1px solid #222;border-top:none;padding:24px;margin-bottom:2px;">
+                <p style="color:#555;font-size:0.7rem;letter-spacing:3px;text-transform:uppercase;margin-bottom:16px;">02 — Sports & Timing</p>
+                <div class="row g-3">
                     <div class="col-md-6">
                         <label class="form-label">Sports Available</label>
                         {{ form.sports }}
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Contact Number</label>
-                        {{ form.contact }}
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Opening Hours</label>
                         {{ form.opening_hours }}
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label">Entry Fee (for grounds)</label>
+                        <label class="form-label">Entry Fee (grounds)</label>
                         {{ form.entry_fee }}
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label">Price per Hour (for turfs)</label>
+                        <label class="form-label">Price per Hour (turfs)</label>
                         {{ form.price_per_hour }}
                     </div>
-                    <div class="col-12">
-                        <label class="form-label">Description</label>
-                        {{ form.description }}
+                    <div class="col-md-6">
+                        <label class="form-label">Contact Number</label>
+                        {{ form.contact }}
                     </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Google Maps Link</label>
+                        {{ form.map_link }}
+                    </div>
+                </div>
+            </div>
 
-                    <div class="col-12"><hr style="border-color:#2a2a4a;"><p style="color:#888;" class="small">📸 Photos (up to 3)</p></div>
+            <div style="border:1px solid #222;border-top:none;padding:24px;margin-bottom:2px;">
+                <p style="color:#555;font-size:0.7rem;letter-spacing:3px;text-transform:uppercase;margin-bottom:16px;">03 — Description</p>
+                <label class="form-label">Description</label>
+                {{ form.description }}
+            </div>
+
+            <div style="border:1px solid #222;border-top:none;padding:24px;margin-bottom:2px;">
+                <p style="color:#555;font-size:0.7rem;letter-spacing:3px;text-transform:uppercase;margin-bottom:4px;">04 — Photos</p>
+                <p style="color:#333;font-size:0.7rem;letter-spacing:1px;margin-bottom:16px;">Upload up to 3 photos</p>
+                <div class="row g-3">
                     <div class="col-md-4">
                         <label class="form-label">Photo 1</label>
                         {{ form.image1 }}
@@ -73,26 +99,30 @@
                         <label class="form-label">Photo 3</label>
                         {{ form.image3 }}
                     </div>
-
-                    <div class="col-12 mt-2">
-                        <button type="submit" class="btn btn-p1 w-100 btn-lg">🏟️ Add Venue!</button>
-                    </div>
                 </div>
-            </form>
-        </div>
+            </div>
+
+            <div style="border:1px solid #222;border-top:none;padding:24px;">
+                <button type="submit" class="btn btn-p1 w-100 btn-lg" style="font-size:1rem;padding:16px;letter-spacing:3px;">
+                    🏟️ Add Venue!
+                </button>
+                <a href="{% url 'venues_home' %}" class="btn btn-p1-outline w-100 mt-2" style="padding:12px;letter-spacing:2px;">
+                    Cancel
+                </a>
+            </div>
+        </form>
+
+        <script>
+        document.getElementById('id_map_link').addEventListener('change', function() {
+            const url = this.value;
+            const match = url.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
+            if (match) {
+                alert('📍 Location found! Lat: ' + match[1] + ', Lng: ' + match[2]);
+            }
+        });
+        </script>
+
     </div>
 </div>
-<script>
-// Auto extract coordinates from Google Maps link
-document.getElementById('id_map_link').addEventListener('change', function() {
-    const url = this.value;
-    // Match coordinates pattern @lat,lng
-    const match = url.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
-    if (match) {
-        document.getElementById('id_latitude').value = match[1];
-        document.getElementById('id_longitude').value = match[2];
-        alert('📍 Coordinates extracted automatically! Lat: ' + match[1] + ', Lng: ' + match[2]);
-    }
-});
-</script>
+
 {% endblock %}

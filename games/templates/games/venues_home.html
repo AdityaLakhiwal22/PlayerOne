@@ -2,90 +2,112 @@
 {% block title %}Grounds & Turfs — Player One{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <div>
-        <h2 style="color:#00ff87;">🏟️ Grounds & Turfs</h2>
-        <p style="color:#888;" class="mb-0">Find grounds and turfs near you</p>
+
+<!-- Header -->
+<div style="border-bottom:1px solid #222;padding-bottom:20px;margin-bottom:32px;">
+    <p style="color:#555;font-size:0.75rem;letter-spacing:3px;text-transform:uppercase;margin:0;">
+        <a href="{% url 'home' %}" style="color:#555;text-decoration:none;">Home</a> / Venues
+    </p>
+    <div class="d-flex justify-content-between align-items-end">
+        <h1 style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:3rem;text-transform:uppercase;letter-spacing:2px;color:#fff;margin:8px 0 0 0;">
+            🏟️ Grounds & Turfs
+        </h1>
+        {% if user.is_authenticated %}
+        <a href="{% url 'add_venue' %}" class="btn btn-p1" style="letter-spacing:2px;">+ Add Venue</a>
+        {% endif %}
     </div>
-    {% if user.is_authenticated %}
-    <a href="{% url 'add_venue' %}" class="btn btn-p1">➕ Add Venue</a>
-    {% endif %}
+    <p style="color:#555;font-size:0.75rem;letter-spacing:2px;text-transform:uppercase;margin:4px 0 0 0;">
+        Find grounds and turfs near you
+    </p>
 </div>
 
 <!-- Stats -->
-<div class="row g-3 mb-4">
-    <div class="col-4">
-        <div class="card p-3 text-center">
-            <p style="color:#00ff87;font-size:2rem;font-weight:800;" class="mb-0">{{ total_venues }}</p>
-            <p style="color:#888;" class="small mb-0">Total Venues</p>
-        </div>
+<div class="row g-0 mb-4" style="border:1px solid #222;">
+    <div class="col-4 text-center py-3" style="border-right:1px solid #222;">
+        <p style="font-family:'Barlow Condensed',sans-serif;font-size:2rem;font-weight:900;color:var(--p1-green);margin:0;">{{ total_venues }}</p>
+        <p style="color:#555;font-size:0.65rem;letter-spacing:2px;text-transform:uppercase;margin:0;">Total Venues</p>
     </div>
-    <div class="col-4">
-        <div class="card p-3 text-center">
-            <p style="color:#00ff87;font-size:2rem;font-weight:800;" class="mb-0">{{ grounds }}</p>
-            <p style="color:#888;" class="small mb-0">Grounds</p>
-        </div>
+    <div class="col-4 text-center py-3" style="border-right:1px solid #222;">
+        <p style="font-family:'Barlow Condensed',sans-serif;font-size:2rem;font-weight:900;color:var(--p1-green);margin:0;">{{ grounds }}</p>
+        <p style="color:#555;font-size:0.65rem;letter-spacing:2px;text-transform:uppercase;margin:0;">🏏 Grounds</p>
     </div>
-    <div class="col-4">
-        <div class="card p-3 text-center">
-            <p style="color:#00ff87;font-size:2rem;font-weight:800;" class="mb-0">{{ turfs }}</p>
-            <p style="color:#888;" class="small mb-0">Turfs</p>
-        </div>
+    <div class="col-4 text-center py-3">
+        <p style="font-family:'Barlow Condensed',sans-serif;font-size:2rem;font-weight:900;color:var(--p1-green);margin:0;">{{ turfs }}</p>
+        <p style="color:#555;font-size:0.65rem;letter-spacing:2px;text-transform:uppercase;margin:0;">⚽ Turfs</p>
     </div>
 </div>
 
-<!-- Venues Map -->
-<div class="card p-0 mb-4" style="overflow:hidden;border-radius:12px;">
+<!-- Map -->
+<div style="border:1px solid #222;margin-bottom:32px;overflow:hidden;">
     <div id="venues-map" style="height:450px;width:100%;"></div>
 </div>
 
+<!-- Cities -->
+<div style="border-bottom:1px solid #222;padding-bottom:12px;margin-bottom:20px;">
+    <h4 style="font-family:'Barlow Condensed',sans-serif;font-weight:900;letter-spacing:3px;text-transform:uppercase;color:#fff;margin:0;">
+        — Browse by City
+    </h4>
+</div>
+
+{% if cities %}
+<div class="row g-2">
+    {% for city in cities %}
+    <div class="col-md-3 col-6">
+        <a href="{% url 'venues_city' city %}" style="text-decoration:none;">
+            <div style="border:1px solid #222;padding:24px;text-align:center;cursor:pointer;transition:border-color 0.2s;" onmouseover="this.style.borderColor='var(--p1-green)'" onmouseout="this.style.borderColor='#222'">
+                <p style="font-size:2rem;margin:0;">🏙️</p>
+                <h5 style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:1.3rem;text-transform:uppercase;letter-spacing:1px;color:#fff;margin:8px 0 0 0;">
+                    {{ city }}
+                </h5>
+            </div>
+        </a>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div style="border:1px solid #222;padding:60px;text-align:center;">
+    <p style="font-family:'Barlow Condensed',sans-serif;font-size:2rem;font-weight:900;color:#222;text-transform:uppercase;letter-spacing:3px;margin:0;">
+        No Venues Yet
+    </p>
+    {% if user.is_authenticated %}
+    <a href="{% url 'add_venue' %}" class="btn btn-p1 mt-3">+ Be the First!</a>
+    {% endif %}
+</div>
+{% endif %}
+
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
 <script>
 const map = L.map('venues-map').setView([19.0760, 72.8777], 13);
-
 L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
     attribution: '© OpenStreetMap © CARTO'
 }).addTo(map);
 
-// Green for grounds, Blue for turfs
 const groundIcon = L.divIcon({
-    html: '<div style="background:#00ff87;width:14px;height:14px;border-radius:50%;border:2px solid #000;"></div>',
-    iconSize: [14, 14],
-    className: ''
+    html: '<div style="background:#ccff00;width:14px;height:14px;border-radius:50%;border:2px solid #000;"></div>',
+    iconSize: [14, 14], className: ''
 });
-
 const turfIcon = L.divIcon({
     html: '<div style="background:#7b9fff;width:14px;height:14px;border-radius:50%;border:2px solid #000;"></div>',
-    iconSize: [14, 14],
-    className: ''
+    iconSize: [14, 14], className: ''
 });
 
-const venues = {{ venues_map_json|safe }};
-
 const cityCoords = {
-    'mumbai': [19.0760, 72.8777],
-    'delhi': [28.6139, 77.2090],
-    'bangalore': [12.9716, 77.5946],
-    'bengaluru': [12.9716, 77.5946],
-    'hyderabad': [17.3850, 78.4867],
-    'chennai': [13.0827, 80.2707],
-    'kolkata': [22.5726, 88.3639],
-    'pune': [18.5204, 73.8567],
-    'ahmedabad': [23.0225, 72.5714],
-    'jaipur': [26.9124, 75.7873],
-    'nagpur': [21.1458, 79.0882],
-    'indore': [22.7196, 75.8577],
+    'mumbai': [19.0760, 72.8777], 'delhi': [28.6139, 77.2090],
+    'bangalore': [12.9716, 77.5946], 'bengaluru': [12.9716, 77.5946],
+    'hyderabad': [17.3850, 78.4867], 'chennai': [13.0827, 80.2707],
+    'kolkata': [22.5726, 88.3639], 'pune': [18.5204, 73.8567],
+    'ahmedabad': [23.0225, 72.5714], 'jaipur': [26.9124, 75.7873],
+    'nagpur': [21.1458, 79.0882], 'indore': [22.7196, 75.8577],
     'goa': [15.2993, 74.1240],
 };
 
-const areaOffsets = {};
+const venues = {{ venues_map_json|safe }};
+const markerGroup = [];
 
 venues.forEach(venue => {
     let lat = venue.lat;
     let lng = venue.lng;
-
     if (!lat || !lng) {
         const cityKey = venue.city.toLowerCase().trim();
         let coords = cityCoords[cityKey];
@@ -99,87 +121,43 @@ venues.forEach(venue => {
             lng = coords[1] + (Math.random() - 0.5) * 0.02;
         }
     }
-
     if (lat && lng) {
+        markerGroup.push([lat, lng]);
         const icon = venue.type === 'ground' ? groundIcon : turfIcon;
         const marker = L.marker([lat, lng], {icon}).addTo(map);
         marker.bindPopup(`
             <div style="min-width:180px;">
-                <strong style="font-size:1rem;">${venue.name}</strong><br>
-                <span style="color:${venue.type === 'ground' ? '#00aa55' : '#5577ff'};">
+                <strong>${venue.name}</strong><br>
+                <span style="color:${venue.type === 'ground' ? '#aaff00' : '#7b9fff'};">
                     ${venue.type === 'ground' ? '🏏 Ground' : '⚽ Turf'}
                 </span><br>
                 📍 ${venue.area}, ${venue.city}<br>
-                🎯 ${venue.sports}<br>
                 ${venue.price ? '💰 ' + venue.price + '<br>' : ''}
-                ${venue.hours ? '⏰ ' + venue.hours + '<br>' : ''}
-                <a href="${venue.url}" style="color:#00aa55;font-weight:bold;">View Details →</a>
+                <a href="${venue.url}" style="color:#aaff00;font-weight:bold;">View →</a>
             </div>
         `);
     }
 });
 
-// Auto fit map to show all markers
-const markerGroup = [];
-venues.forEach(venue => {
-    if (venue.lat && venue.lng) {
-        markerGroup.push([venue.lat, venue.lng]);
-    }
-});
 if (markerGroup.length > 0) {
-    map.fitBounds(markerGroup, {padding: [30, 30], maxZoom: 15});
+    map.fitBounds(markerGroup, {padding: [50, 50], maxZoom: 14});
 }
 
-// Legend
 const legend = L.control({position: 'bottomright'});
 legend.onAdd = function() {
     const div = L.DomUtil.create('div');
     div.innerHTML = `
-        <div style="background:#1a1a2e;padding:8px 12px;border-radius:8px;border:1px solid #2a2a4a;">
+        <div style="background:#111;padding:8px 12px;border:1px solid #222;">
             <div style="color:#fff;font-size:0.8rem;margin-bottom:4px;">
-                <span style="display:inline-block;width:12px;height:12px;background:#00ff87;border-radius:50%;margin-right:6px;"></span>Ground
+                <span style="display:inline-block;width:10px;height:10px;background:#ccff00;border-radius:50%;margin-right:6px;"></span>Ground
             </div>
             <div style="color:#fff;font-size:0.8rem;">
-                <span style="display:inline-block;width:12px;height:12px;background:#7b9fff;border-radius:50%;margin-right:6px;"></span>Turf
+                <span style="display:inline-block;width:10px;height:10px;background:#7b9fff;border-radius:50%;margin-right:6px;"></span>Turf
             </div>
-        </div>
-    `;
+        </div>`;
     return div;
 };
 legend.addTo(map);
-
-// Center on user location
-if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(pos => {
-        map.setView([pos.coords.latitude, pos.coords.longitude], 13);
-    });
-}
 </script>
 
-<!-- Cities -->
-{% if cities %}
-<h5 style="color:#fff;" class="mb-3">📍 Browse by City</h5>
-<div class="row g-3">
-    {% for city in cities %}
-    <div class="col-md-3 col-6">
-        <a href="{% url 'venues_city' city %}" style="text-decoration:none;">
-            <div class="card p-3 text-center" style="cursor:pointer;">
-                <div style="font-size:2rem;">🏙️</div>
-                <h6 style="color:#fff;" class="mt-2 mb-0">{{ city }}</h6>
-                <p style="color:#888;" class="small mb-0">
-                    {{ city }} venues
-                </p>
-            </div>
-        </a>
-    </div>
-    {% endfor %}
-</div>
-{% else %}
-<div class="card p-4 text-center">
-    <p style="color:#888;">No venues added yet.</p>
-    {% if user.is_authenticated %}
-    <a href="{% url 'add_venue' %}" class="btn btn-p1">➕ Be the first to add one!</a>
-    {% endif %}
-</div>
-{% endif %}
 {% endblock %}
