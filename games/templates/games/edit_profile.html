@@ -4,23 +4,44 @@
 {% block content %}
 <div class="row justify-content-center">
     <div class="col-md-6">
-        <div class="card p-4">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2 style="color:#00ff87;" class="mb-0">👤 Edit Profile</h2>
-                <a href="{% url 'player_profile' user.username %}" class="btn btn-outline-secondary btn-sm">← Back to Profile</a>
-            </div>
-            <form method="post" enctype="multipart/form-data">
-                {% csrf_token %}
-                {% for field in form %}
-                <div class="mb-3">
-                    <label class="form-label">{{ field.label }}</label>
-                    {{ field }}
-                    {% if field.help_text %}<div class="form-text text-muted">{{ field.help_text }}</div>{% endif %}
-                </div>
-                {% endfor %}
-                <button type="submit" class="btn btn-p1 w-100">Save Profile 💾</button>
-            </form>
+
+        <div style="border-bottom:1px solid #222;padding-bottom:20px;margin-bottom:32px;">
+            <p style="color:#555;font-size:0.75rem;letter-spacing:3px;text-transform:uppercase;margin:0;">
+                <a href="{% url 'player_profile' user.username %}" style="color:#555;text-decoration:none;">Profile</a> / Edit
+            </p>
+            <h1 style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:3rem;text-transform:uppercase;letter-spacing:2px;color:#fff;margin:8px 0 0 0;">
+                ✏️ Edit Profile
+            </h1>
         </div>
+
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div style="border:1px solid #222;padding:24px;margin-bottom:2px;">
+                <p style="color:#555;font-size:0.7rem;letter-spacing:3px;text-transform:uppercase;margin-bottom:16px;">01 — About You</p>
+                <div class="row g-3">
+                    {% for field in form %}
+                    <div class="col-12">
+                        <label class="form-label">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.help_text %}
+                        <p style="color:#333;font-size:0.75rem;margin:4px 0 0 0;">{{ field.help_text }}</p>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div style="border:1px solid #222;border-top:none;padding:24px;">
+                <button type="submit" class="btn btn-p1 w-100" style="padding:14px;font-size:1rem;letter-spacing:3px;">
+                    💾 Save Profile
+                </button>
+                <a href="{% url 'player_profile' user.username %}" class="btn btn-p1-outline w-100 mt-2" style="padding:12px;letter-spacing:2px;">
+                    Cancel
+                </a>
+            </div>
+        </form>
+
     </div>
 </div>
 {% endblock %}

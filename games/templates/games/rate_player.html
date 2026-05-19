@@ -4,32 +4,52 @@
 {% block content %}
 <div class="row justify-content-center">
     <div class="col-md-5">
-        <div class="card p-4 text-center">
-            <h3 style="color:#00ff87;">⭐ Rate Player</h3>
-            <p style="color:#aaa;" class="mt-2">
-                How was your experience playing with<br>
-                <strong style="color:#fff;">{{ rated_user.username }}</strong>
-                in <strong style="color:#fff;">{{ post.title }}</strong>?
+
+        <div style="border-bottom:1px solid #222;padding-bottom:20px;margin-bottom:32px;text-align:center;">
+            <h1 style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:3rem;text-transform:uppercase;letter-spacing:2px;color:#fff;margin:0;">
+                ⭐ Rate Player
+            </h1>
+        </div>
+
+        <div style="border:1px solid #222;padding:32px;text-align:center;">
+            <p style="color:#555;font-size:0.75rem;letter-spacing:2px;text-transform:uppercase;margin:0 0 8px 0;">
+                How was your experience with
+            </p>
+            <h3 style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:2rem;text-transform:uppercase;letter-spacing:2px;color:var(--p1-green);margin:0 0 4px 0;">
+                {{ rated_user.username }}
+            </h3>
+            <p style="color:#444;font-size:0.75rem;letter-spacing:1px;text-transform:uppercase;margin:0 0 24px 0;">
+                in {{ post.title }}
             </p>
 
-            <form method="post" class="mt-3">
+            <form method="post">
                 {% csrf_token %}
-                <div class="mb-4">
-                    <div class="d-flex justify-content-center gap-2 fs-2" id="stars">
+
+                <!-- Star Rating -->
+                <div style="margin-bottom:24px;">
+                    <div class="d-flex justify-content-center gap-3" id="stars" style="font-size:2.5rem;">
                         {% for i in "12345" %}
-                        <span class="star" data-value="{{ i }}" style="cursor:pointer;opacity:0.4;">⭐</span>
+                        <span class="star" data-value="{{ i }}" style="cursor:pointer;opacity:1;">⭐</span>
                         {% endfor %}
                     </div>
                     <input type="hidden" name="score" id="score-input" value="5">
                 </div>
-                <div class="mb-3 text-start">
+
+                <!-- Comment -->
+                <div style="margin-bottom:24px;text-align:left;">
                     <label class="form-label">Comment (optional)</label>
                     <input type="text" name="comment" class="form-control" placeholder="Great teammate, very punctual...">
                 </div>
-                <button type="submit" class="btn btn-p1 w-100">Submit Rating 🚀</button>
-                <a href="{% url 'post_detail' post.pk %}" class="btn btn-outline-secondary w-100 mt-2">Cancel</a>
+
+                <button type="submit" class="btn btn-p1 w-100" style="padding:14px;font-size:1rem;letter-spacing:3px;">
+                    Submit Rating 🚀
+                </button>
+                <a href="{% url 'post_detail' post.pk %}" class="btn btn-p1-outline w-100 mt-2" style="padding:12px;letter-spacing:2px;">
+                    Cancel
+                </a>
             </form>
         </div>
+
     </div>
 </div>
 
@@ -37,7 +57,6 @@
 const stars = document.querySelectorAll('.star');
 let selected = 5;
 
-// Highlight all by default
 stars.forEach(s => s.style.opacity = '1');
 
 stars.forEach(star => {
@@ -61,4 +80,5 @@ stars.forEach(star => {
     });
 });
 </script>
+
 {% endblock %}

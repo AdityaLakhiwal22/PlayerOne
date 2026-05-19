@@ -1,40 +1,123 @@
 {% extends 'base.html' %}
 {% block title %}Edit Post — Player One{% endblock %}
+
 {% block content %}
 <div class="row justify-content-center">
-  <div class="col-md-8">
-    <div class="card p-4">
-      <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 style="color:#00ff87;">✏️ Edit Post</h2>
-        <a href="{% url 'delete_post' post.pk %}" class="btn btn-danger btn-sm">🗑️ Delete</a>
-      </div>
-      <form method="post">
-        {% csrf_token %}
-        <div class="row g-3">
-          <div class="col-md-6"><label class="form-label">Mode</label>{{ form.mode }}</div>
-          <div class="col-md-6"><label class="form-label">Sport</label>{{ form.sport }}</div>
-          <div class="col-12"><label class="form-label">Title</label>{{ form.title }}</div>
-          <div class="col-12"><label class="form-label">Description</label>{{ form.description }}</div>
-          <div class="col-md-4"><label class="form-label">Players You Have</label>{{ form.players_have }}</div>
-          <div class="col-md-4"><label class="form-label">Players You Need</label>{{ form.players_needed }}</div>
-          <div class="col-md-4"><label class="form-label">Skill Level</label>{{ form.skill_level }}</div>
-          <div class="col-md-6"><label class="form-label">Location</label>{{ form.location }}</div>
-          <div class="col-md-6"><label class="form-label">City</label>{{ form.city }}</div>
-          <div class="col-md-6"><label class="form-label">Date</label>{{ form.play_date }}</div>
-          <div class="col-md-6"><label class="form-label">Time</label>{{ form.play_time }}</div>
-          <div class="col-md-6"><label class="form-label">Platform</label>{{ form.game_platform }}</div>
-          <div class="col-md-6"><label class="form-label">Game ID</label>{{ form.game_id }}</div>
-          <div class="col-12">
-            <label class="form-label">Google Maps Link (optional)</label>
-            {{ form.map_link }}
-          </div>
-          <div class="col-12 d-flex gap-2 mt-2">
-            <button type="submit" class="btn btn-p1 flex-grow-1">💾 Save Changes</button>
-            <a href="{% url 'post_detail' post.pk %}" class="btn btn-outline-secondary">Cancel</a>
-          </div>
+    <div class="col-md-8">
+
+        <div style="border-bottom:1px solid #222;padding-bottom:20px;margin-bottom:32px;">
+            <p style="color:#555;font-size:0.75rem;letter-spacing:3px;text-transform:uppercase;margin:0;">
+                <a href="{% url 'post_detail' post.pk %}" style="color:#555;text-decoration:none;">Post</a> / Edit
+            </p>
+            <div class="d-flex justify-content-between align-items-end">
+                <h1 style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:3rem;text-transform:uppercase;letter-spacing:2px;color:#fff;margin:8px 0 0 0;">
+                    ✏️ Edit Post
+                </h1>
+                <a href="{% url 'delete_post' post.pk %}" class="btn btn-sm" style="border:1px solid #ff4444;color:#ff4444;border-radius:0;font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:1px;text-transform:uppercase;">
+                    🗑️ Delete
+                </a>
+            </div>
         </div>
-      </form>
+
+        <form method="post">
+            {% csrf_token %}
+
+            <div style="border:1px solid #222;padding:24px;margin-bottom:2px;">
+                <p style="color:#555;font-size:0.7rem;letter-spacing:3px;text-transform:uppercase;margin-bottom:16px;">01 — Game Type</p>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Mode</label>
+                        {{ form.mode }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Sport</label>
+                        {{ form.sport }}
+                    </div>
+                </div>
+            </div>
+
+            <div style="border:1px solid #222;border-top:none;padding:24px;margin-bottom:2px;">
+                <p style="color:#555;font-size:0.7rem;letter-spacing:3px;text-transform:uppercase;margin-bottom:16px;">02 — Details</p>
+                <div class="row g-3">
+                    <div class="col-12">
+                        <label class="form-label">Title</label>
+                        {{ form.title }}
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label">Description</label>
+                        {{ form.description }}
+                    </div>
+                </div>
+            </div>
+
+            <div style="border:1px solid #222;border-top:none;padding:24px;margin-bottom:2px;">
+                <p style="color:#555;font-size:0.7rem;letter-spacing:3px;text-transform:uppercase;margin-bottom:16px;">03 — Players</p>
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label">Players You Have</label>
+                        {{ form.players_have }}
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Players You Need</label>
+                        {{ form.players_needed }}
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Skill Level</label>
+                        {{ form.skill_level }}
+                    </div>
+                </div>
+            </div>
+
+            <div style="border:1px solid #222;border-top:none;padding:24px;margin-bottom:2px;">
+                <p style="color:#555;font-size:0.7rem;letter-spacing:3px;text-transform:uppercase;margin-bottom:16px;">04 — Outdoor Fields</p>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Location</label>
+                        {{ form.location }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">City</label>
+                        {{ form.city }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Date</label>
+                        {{ form.play_date }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Time</label>
+                        {{ form.play_time }}
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label">Google Maps Link</label>
+                        {{ form.map_link }}
+                    </div>
+                </div>
+            </div>
+
+            <div style="border:1px solid #222;border-top:none;padding:24px;margin-bottom:2px;">
+                <p style="color:#555;font-size:0.7rem;letter-spacing:3px;text-transform:uppercase;margin-bottom:16px;">05 — Online Fields</p>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Platform</label>
+                        {{ form.game_platform }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Game ID</label>
+                        {{ form.game_id }}
+                    </div>
+                </div>
+            </div>
+
+            <div style="border:1px solid #222;border-top:none;padding:24px;">
+                <button type="submit" class="btn btn-p1 w-100" style="padding:14px;font-size:1rem;letter-spacing:3px;">
+                    💾 Save Changes
+                </button>
+                <a href="{% url 'post_detail' post.pk %}" class="btn btn-p1-outline w-100 mt-2" style="padding:12px;letter-spacing:2px;">
+                    Cancel
+                </a>
+            </div>
+        </form>
+
     </div>
-  </div>
 </div>
 {% endblock %}
