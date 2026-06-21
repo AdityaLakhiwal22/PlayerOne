@@ -1,169 +1,167 @@
 {% extends 'base.html' %}
-{% block title %}Player One — Find Players Anywhere{% endblock %}
+{% block title %}PlayerOne — Find Players. Book Turf. Play Now.{% endblock %}
+{% block nav_home %}active-nav{% endblock %}
 
 {% block content %}
-
-<!-- Hero Section -->
-<div class="text-center py-5 mb-2" style="border-bottom:1px solid #222;margin-left:-12px;margin-right:-12px;padding-left:12px;padding-right:12px;">
-    <p style="font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:4px;color:#666;font-size:0.85rem;text-transform:uppercase;">
-        India's Sports Community Platform
-    </p>
-    <h1 style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:clamp(3rem,8vw,7rem);line-height:1;color:#fff;text-transform:uppercase;letter-spacing:2px;">
-        FIND PLAYERS.<br>
-        <span style="color:var(--p1-green);">ANYTIME.</span><br>
-        ANYWHERE.
-    </h1>
-    <p style="color:#666;font-size:1rem;letter-spacing:2px;text-transform:uppercase;margin-top:16px;">
-        Cricket · Football · BGMI · Kabaddi · Badminton & More
-    </p>
-    {% if not user.is_authenticated %}
-    <div class="d-flex gap-3 justify-content-center mt-4">
-        <a href="{% url 'register' %}" class="btn btn-p1 btn-lg px-5">Join Free</a>
-        <a href="{% url 'login' %}" class="btn btn-p1-outline btn-lg px-5">Login</a>
+<!-- HERO -->
+<section class="hero" style="padding-top:30px;min-height:auto">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">India's Sports Network</div>
+    <div class="hero-title">FIND<br><span class="accent">PLAYERS.</span><br>PLAY NOW.</div>
+    <div class="hero-subtitle-row">
+      <p class="hero-subtitle">Connect with players in your city for cricket, football, kabaddi and more — or squad up for BGMI, Valorant and FIFA. Post a game, find your players, play today.</p>
+      <div class="hero-stats">
+        <div class="hero-stat"><div class="hero-stat-num">{{ posts|length }}+</div><div class="hero-stat-label">Open Games</div></div>
+        <div class="hero-stat"><div class="hero-stat-num">12+</div><div class="hero-stat-label">Sports</div></div>
+        <div class="hero-stat"><div class="hero-stat-num">🇮🇳</div><div class="hero-stat-label">India</div></div>
+      </div>
     </div>
-    {% else %}
-    <a href="{% url 'create_post' %}" class="btn btn-p1 btn-lg px-5 mt-4">+ Post a Game Now</a>
-    {% endif %}
+  </div>
+
+  <!-- SEARCH CARD -->
+  <div class="search-section">
+    <div class="search-card">
+      <form method="get" action="{% url 'home' %}">
+      <div class="sport-tabs">
+        <button type="submit" name="mode" value="" class="sport-tab {% if not filters.mode %}active{% endif %}"><span class="sport-emoji">🌐</span>All</button>
+        <button type="submit" name="mode" value="outdoor" class="sport-tab {% if filters.mode == 'outdoor' %}active{% endif %}"><span class="sport-emoji">🏏</span>Outdoor</button>
+        <button type="submit" name="mode" value="online" class="sport-tab {% if filters.mode == 'online' %}active{% endif %}"><span class="sport-emoji">🎮</span>Online</button>
+      </div>
+      <div class="search-row">
+        <div class="search-field">
+          <div class="search-label">Sport</div>
+          <select name="sport" class="search-input">
+            <option value="">All Sports</option>
+            {% for val, label in sport_choices %}
+            <option value="{{ val }}" {% if filters.sport == val %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="search-field">
+          <div class="search-label">City</div>
+          <input type="text" name="city" class="search-input" placeholder="e.g. Mumbai" value="{{ filters.city }}">
+        </div>
+        <div class="search-field">
+          <div class="search-label">Search</div>
+          <input type="text" name="search" class="search-input" placeholder="Search games..." value="{{ filters.search }}">
+        </div>
+        <button type="submit" class="search-btn">SEARCH →</button>
+      </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- STRIP -->
+<div class="strip" style="margin-top:2rem">
+  <div class="strip-track">
+    <div class="strip-item"><span class="dot"></span>Post a game</div>
+    <div class="strip-item"><span class="dot"></span>Find teammates</div>
+    <div class="strip-item"><span class="dot"></span>Join the squad</div>
+    <div class="strip-item"><span class="dot"></span>Rate players</div>
+    <div class="strip-item"><span class="dot"></span>Explore venues</div>
+    <div class="strip-item"><span class="dot"></span>Post a game</div>
+    <div class="strip-item"><span class="dot"></span>Find teammates</div>
+    <div class="strip-item"><span class="dot"></span>Join the squad</div>
+    <div class="strip-item"><span class="dot"></span>Rate players</div>
+    <div class="strip-item"><span class="dot"></span>Explore venues</div>
+  </div>
 </div>
 
-<!-- Stats Bar -->
-<div class="row g-0 mb-4" style="border:1px solid #222;border-top:none;">
-    <div class="col-4 text-center py-3" style="border-right:1px solid #222;">
-        <p style="font-family:'Barlow Condensed',sans-serif;font-size:1.8rem;font-weight:900;color:var(--p1-green);margin:0;">{{ posts|length }}+</p>
-        <p style="color:#666;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase;margin:0;">Active Games</p>
-    </div>
-    <div class="col-4 text-center py-3" style="border-right:1px solid #222;">
-        <p style="font-family:'Barlow Condensed',sans-serif;font-size:1.8rem;font-weight:900;color:var(--p1-green);margin:0;">2</p>
-        <p style="color:#666;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase;margin:0;">Sports</p>
-    </div>
-    <div class="col-4 text-center py-3">
-        <p style="font-family:'Barlow Condensed',sans-serif;font-size:1.8rem;font-weight:900;color:var(--p1-green);margin:0;">🇮🇳</p>
-        <p style="color:#666;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase;margin:0;">Made in India</p>
-    </div>
-</div>
+<!-- OPEN GAMES -->
+<section style="padding:5rem 3rem 0;max-width:1400px;margin:0 auto">
+  <div class="section-eyebrow">{{ posts|length }} Open Right Now</div>
+  <div class="section-title">OPEN <span class="dim">GAMES</span></div>
+</section>
 
-<!-- Filters -->
-<div class="mb-4" style="border:1px solid #222;padding:16px;">
-    <form method="get" class="row g-2 align-items-end">
-        <div class="col-md-3">
-            <label class="form-label">Search</label>
-            <input type="text" name="search" class="form-control" placeholder="Cricket, BGMI, Mumbai..." value="{{ filters.search }}">
-        </div>
-        <div class="col-md-2">
-            <label class="form-label">Mode</label>
-            <select name="mode" class="form-select">
-                <option value="">All Modes</option>
-                {% for val, label in mode_choices %}
-                <option value="{{ val }}" {% if filters.mode == val %}selected{% endif %}>{{ label }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        <div class="col-md-3">
-            <label class="form-label">Sport</label>
-            <select name="sport" class="form-select">
-                <option value="">All Sports</option>
-                {% for val, label in sport_choices %}
-                <option value="{{ val }}" {% if filters.sport == val %}selected{% endif %}>{{ label }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        <div class="col-md-2">
-            <label class="form-label">City</label>
-            <input type="text" name="city" class="form-control" placeholder="e.g. Mumbai" value="{{ filters.city }}">
-        </div>
-        <div class="col-md-2">
-            <button type="submit" class="btn btn-p1 w-100">Filter</button>
-        </div>
-    </form>
-</div>
-
-<!-- Section Title -->
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h2 style="font-family:'Barlow Condensed',sans-serif;font-size:1.5rem;font-weight:900;letter-spacing:3px;text-transform:uppercase;color:#fff;margin:0;">
-        — Open Games
-    </h2>
-    <span style="color:#666;font-size:0.75rem;letter-spacing:2px;text-transform:uppercase;">{{ posts|length }} found</span>
-</div>
-
-<!-- Posts Grid -->
-{% if posts %}
-<div class="row g-3">
+<div style="max-width:1400px;margin:0 auto;padding:0 3rem 5rem">
+  {% if posts %}
+  <div class="players-grid">
     {% for post in posts %}
-    <div class="col-md-6 col-lg-4">
-        <div class="card h-100 p-3" style="position:relative;">
-
-            <!-- Top row -->
-            <div class="d-flex justify-content-between align-items-start mb-2">
-                <span class="badge {% if post.mode == 'outdoor' %}badge-outdoor{% else %}badge-online{% endif %} px-2 py-1">
-                    {% if post.mode == 'outdoor' %}🏏 Outdoor{% else %}🎮 Online{% endif %}
-                </span>
-                <span class="sport-tag" style="color:#fff;">{{ post.get_sport_display }}</span>
-            </div>
-
-            <!-- Title -->
-            <h5 style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:1.2rem;text-transform:uppercase;letter-spacing:1px;color:#fff;margin-bottom:8px;">
-                {{ post.title }}
-            </h5>
-
-            {% if post.description %}
-            <p style="color:#666;font-size:0.85rem;margin-bottom:8px;">{{ post.description|truncatechars:70 }}</p>
-            {% endif %}
-
-            <!-- Info -->
-            <div class="mt-auto">
-                {% if post.mode == 'outdoor' and post.location %}
-                <p style="color:#aaa;font-size:0.8rem;margin-bottom:4px;letter-spacing:1px;">
-                    📍 {{ post.location }}{% if post.city %}, {{ post.city }}{% endif %}
-                </p>
-                {% endif %}
-                {% if post.play_date %}
-                <p style="color:#aaa;font-size:0.8rem;margin-bottom:8px;letter-spacing:1px;">
-                    📅 {{ post.play_date }}{% if post.play_time %} at {{ post.play_time }}{% endif %}
-                </p>
-                {% endif %}
-
-                <!-- Bottom row -->
-                <div style="border-top:1px solid #222;padding-top:10px;margin-top:8px;">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <p style="color:#666;font-size:0.7rem;letter-spacing:1px;text-transform:uppercase;margin:0;">Need</p>
-                            <p style="font-family:'Barlow Condensed',sans-serif;font-size:1.3rem;font-weight:900;color:var(--p1-green);margin:0;">
-                                {{ post.spots_left }} Players
-                            </p>
-                        </div>
-                        <div class="text-end">
-                            <p style="color:#666;font-size:0.7rem;letter-spacing:1px;text-transform:uppercase;margin:0;">Level</p>
-                            <p style="font-family:'Barlow Condensed',sans-serif;font-size:0.9rem;font-weight:700;color:#fff;margin:0;">
-                                {{ post.get_skill_level_display }}
-                            </p>
-                        </div>
-                    </div>
-                    <div class="d-flex justify-content-between align-items-center mt-2">
-                        <span style="color:#555;font-size:0.75rem;">
-                            by <a href="{% url 'player_profile' post.posted_by.username %}" style="color:#888;text-decoration:none;">{{ post.posted_by.username }}</a>
-                        </span>
-                        <a href="{% url 'post_detail' post.pk %}" class="btn btn-p1 btn-sm px-3">View →</a>
-                    </div>
-                </div>
-            </div>
+    <a href="{% url 'post_detail' post.pk %}" class="player-card" style="text-decoration:none;display:block">
+      <div class="player-num">{{ forloop.counter|stringformat:"02d" }}</div>
+      <div class="player-sport-badge">
+        {% if post.mode == 'outdoor' %}🏏{% else %}🎮{% endif %} {{ post.get_sport_display }}
+      </div>
+      <div class="player-name">{{ post.title|upper|truncatechars:22 }}</div>
+      <div class="player-role">by {{ post.posted_by.username }} {% if post.city %}· {{ post.city }}{% endif %}</div>
+      <div class="player-meta">
+        <div class="player-meta-item"><strong>{{ post.spots_left }}</strong>Needed</div>
+        <div class="player-meta-item"><strong>{{ post.skill_level|default:"Any" }}</strong>Level</div>
+        <div class="player-meta-item">
+          <strong>
+            <span class="avail-dot {% if post.status == 'open' %}on{% else %}off{% endif %}"></span>
+            {{ post.get_status_display }}
+          </strong>
+          Status
         </div>
-    </div>
+      </div>
+      <div class="player-cta">View &amp; Join</div>
+    </a>
     {% endfor %}
-</div>
-
-{% else %}
-<!-- Empty State -->
-<div style="border:1px solid #222;padding:60px;text-align:center;">
-    <p style="font-family:'Barlow Condensed',sans-serif;font-size:3rem;font-weight:900;color:#222;text-transform:uppercase;letter-spacing:3px;">
-        No Games Found
-    </p>
-    <p style="color:#555;letter-spacing:2px;text-transform:uppercase;font-size:0.8rem;">Be the first to post a game in your area</p>
+  </div>
+  {% else %}
+  <div style="background:var(--dark2);border:1px solid var(--border);padding:4rem 2rem;text-align:center">
+    <div style="font-size:3rem;margin-bottom:1rem">🏟️</div>
+    <div class="section-title" style="font-size:2.2rem;margin-bottom:.5rem">NO GAMES YET</div>
+    <p style="color:var(--text2);margin-bottom:1.5rem">Be the first to post a game and find your squad.</p>
     {% if user.is_authenticated %}
-    <a href="{% url 'create_post' %}" class="btn btn-p1 mt-3">+ Post a Game</a>
+    <a href="{% url 'create_post' %}" class="btn-p1">+ Post a Game</a>
     {% else %}
-    <a href="{% url 'register' %}" class="btn btn-p1 mt-3">Join & Post</a>
+    <a href="{% url 'register' %}" class="btn-p1">Join &amp; Post</a>
     {% endif %}
+  </div>
+  {% endif %}
 </div>
-{% endif %}
 
+<!-- HOW IT WORKS -->
+<section style="padding:0 3rem;max-width:1400px;margin:0 auto">
+  <div class="section-eyebrow">The Process</div>
+  <div class="section-title">HOW IT <span class="dim">WORKS</span></div>
+</section>
+<div style="max-width:1400px;margin:0 auto;padding:0 3rem 5rem">
+  <div class="how-grid">
+    <div class="how-step">
+      <div class="how-num">01</div>
+      <div class="how-icon">🔍</div>
+      <div class="how-title">Search Sport</div>
+      <div class="how-desc">Choose your sport, city, and game mode — outdoor or online.</div>
+    </div>
+    <div class="how-step">
+      <div class="how-num">02</div>
+      <div class="how-icon">📝</div>
+      <div class="how-title">Post or Join</div>
+      <div class="how-desc">Post your own game needing players, or join an open one nearby.</div>
+    </div>
+    <div class="how-step">
+      <div class="how-num">03</div>
+      <div class="how-icon">✅</div>
+      <div class="how-title">Get Accepted</div>
+      <div class="how-desc">Post owner reviews requests and accepts the right players.</div>
+    </div>
+    <div class="how-step">
+      <div class="how-num">04</div>
+      <div class="how-icon">🏆</div>
+      <div class="how-title">Play &amp; Rate</div>
+      <div class="how-desc">Show up, play hard, rate your teammates after the game.</div>
+    </div>
+  </div>
+</div>
+
+<!-- CTA -->
+<div class="cta-banner">
+  <div class="cta-banner-title">READY TO <span style="color:var(--lime)">PLAY?</span></div>
+  <p class="cta-banner-sub">Join India's growing sports community. Your next game is one click away.</p>
+  <div class="cta-btns">
+    {% if user.is_authenticated %}
+    <a href="{% url 'create_post' %}" class="btn-primary">+ Post a Game</a>
+    <a href="{% url 'search_players' %}" class="btn-outline">Find Players</a>
+    {% else %}
+    <a href="{% url 'register' %}" class="btn-primary">Join Now</a>
+    <a href="{% url 'login' %}" class="btn-outline">Sign In</a>
+    {% endif %}
+  </div>
+</div>
 {% endblock %}

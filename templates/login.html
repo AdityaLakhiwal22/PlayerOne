@@ -1,58 +1,51 @@
 {% extends 'base.html' %}
-{% block title %}Login — Player One{% endblock %}
+{% block title %}Login — PlayerOne{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-5">
+<style>
+/* Bridge: Django form-control/form-select widgets → friend's input look */
+.search-card .form-control, .search-card .form-select {
+  width:100%;background:var(--dark3);border:1px solid var(--border);color:var(--text);
+  padding:.65rem 1rem;border-radius:2px;font-family:'DM Sans',sans-serif;font-size:.9rem;
+  outline:none;transition:border-color .2s;margin-top:.25rem;
+}
+.search-card .form-control:focus, .search-card .form-select:focus{border-color:var(--lime)}
+</style>
+<div style="max-width:420px;margin:0 auto;padding:5rem 1.5rem">
+  <div class="search-card">
+    <div class="modal-title">LOGIN</div>
+    <div class="modal-sub">Welcome back — let's find you a game.</div>
 
-        <!-- Header -->
-        <div style="text-align:center;margin-bottom:32px;">
-            <h1 style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:3.5rem;text-transform:uppercase;letter-spacing:3px;color:#fff;margin:0;">
-                Welcome<br><span style="color:var(--p1-green);">Back</span>
-            </h1>
-            <p style="color:#555;font-size:0.75rem;letter-spacing:3px;text-transform:uppercase;margin:8px 0 0 0;">
-                Login to find your squad
-            </p>
-        </div>
+    <form method="post">
+      {% csrf_token %}
+      <div class="form-group">
+        <label class="form-label">Username</label>
+        {{ form.username }}
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        {{ form.password }}
+      </div>
 
-        <!-- Form -->
-        <div style="border:1px solid #222;">
-            <form method="post" style="padding:32px;">
-                {% csrf_token %}
+      {% if form.errors %}
+      <div style="background:rgba(255,68,68,.06);border:1px solid rgba(255,68,68,.25);border-left:3px solid var(--red);color:#ff8888;padding:.75rem 1rem;margin-bottom:1rem;border-radius:2px;font-size:.85rem">
+        Invalid username or password.
+      </div>
+      {% endif %}
 
-                <div style="margin-bottom:20px;">
-                    <label class="form-label">Username</label>
-                    <input type="text" name="username" class="form-control" placeholder="Your username" required>
-                </div>
+      <button type="submit" class="modal-submit">LOGIN →</button>
+    </form>
 
-                <div style="margin-bottom:24px;">
-                    <label class="form-label">Password</label>
-                    <input type="password" name="password" class="form-control" placeholder="Your password" required>
-                </div>
-
-                {% if form.errors %}
-                <div style="border:1px solid #ff4444;padding:12px;margin-bottom:16px;">
-                    <p style="color:#ff4444;font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin:0;font-size:0.85rem;">
-                        Invalid username or password
-                    </p>
-                </div>
-                {% endif %}
-
-                <button type="submit" class="btn btn-p1 w-100" style="padding:14px;font-size:1rem;letter-spacing:3px;">
-                    Login →
-                </button>
-            </form>
-
-            <div style="border-top:1px solid #222;padding:20px 32px;text-align:center;">
-                <p style="color:#555;font-size:0.75rem;letter-spacing:1px;text-transform:uppercase;margin:0;">
-                    No account?
-                    <a href="{% url 'register' %}" style="color:var(--p1-green);text-decoration:none;font-weight:700;">Join Free</a>
-                    &nbsp;·&nbsp;
-                    <a href="{% url 'password_reset' %}" style="color:#444;text-decoration:none;">Forgot Password?</a>
-                </p>
-            </div>
-        </div>
-
+    <div style="text-align:center;margin-top:1.5rem">
+      <a href="{% url 'password_reset' %}" style="color:var(--text2);font-size:.78rem;font-family:'DM Mono',monospace">Forgot password?</a>
     </div>
+
+    <div class="strip" style="margin:1.5rem -2.5rem -2.5rem;border-left:none;border-right:none">
+      <div style="padding:1rem;text-align:center">
+        <span style="color:var(--text2);font-size:.85rem">New here? </span>
+        <a href="{% url 'register' %}" style="color:var(--lime);font-weight:600;text-decoration:none">Create an account →</a>
+      </div>
+    </div>
+  </div>
 </div>
 {% endblock %}

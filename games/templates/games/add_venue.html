@@ -1,128 +1,92 @@
 {% extends 'base.html' %}
-{% block title %}Add Venue — Player One{% endblock %}
+{% block title %}Add Venue — PlayerOne{% endblock %}
+{% block nav_venues %}active-nav{% endblock %}
 
 {% block content %}
+<div style="max-width:760px;margin:0 auto;padding:3rem">
+  <div class="search-card">
+    <div class="modal-title">ADD A VENUE</div>
+    <div class="modal-sub">Help others find this ground or turf — add it to the directory.</div>
 
-<div class="row justify-content-center">
-    <div class="col-md-8">
-
-        <div style="border-bottom:1px solid #222;padding-bottom:20px;margin-bottom:32px;">
-            <p style="color:#555;font-size:0.75rem;letter-spacing:3px;text-transform:uppercase;margin:0;">
-                <a href="{% url 'venues_home' %}" style="color:#555;text-decoration:none;">Venues</a> / Add
-            </p>
-            <h1 style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:3rem;text-transform:uppercase;letter-spacing:2px;color:#fff;margin:8px 0 0 0;">
-                🏟️ Add a Venue
-            </h1>
-            <p style="color:#555;font-size:0.75rem;letter-spacing:2px;text-transform:uppercase;margin:4px 0 0 0;">
-                Add a ground or turf so others can find it!
-            </p>
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Venue Name *</label>
+          {{ form.name }}
         </div>
+        <div class="form-group">
+          <label class="form-label">Type *</label>
+          {{ form.venue_type }}
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Area *</label>
+          {{ form.area }}
+        </div>
+        <div class="form-group">
+          <label class="form-label">City *</label>
+          {{ form.city }}
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Address</label>
+        {{ form.address }}
+      </div>
+      <div class="form-group">
+        <label class="form-label">Google Maps Link</label>
+        {{ form.map_link }}
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Sports Available</label>
+          {{ form.sports }}
+        </div>
+        <div class="form-group">
+          <label class="form-label">Contact Number</label>
+          {{ form.contact }}
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Opening Hours</label>
+          {{ form.opening_hours }}
+        </div>
+        <div class="form-group">
+          <label class="form-label">Entry Fee (Grounds)</label>
+          {{ form.entry_fee }}
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Price per Hour (Turfs)</label>
+        {{ form.price_per_hour }}
+      </div>
+      <div class="form-group">
+        <label class="form-label">Description</label>
+        {{ form.description }}
+      </div>
 
-        <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
+      <div style="border-top:1px solid var(--border);margin:1.5rem 0;padding-top:1.5rem">
+        <label class="form-label" style="margin-bottom:1rem">📸 Photos (up to 3)</label>
+        <div class="form-row" style="grid-template-columns:1fr 1fr 1fr">
+          <div class="form-group">
+            <label class="form-label" style="color:var(--text2)">Photo 1</label>
+            {{ form.image1 }}
+          </div>
+          <div class="form-group">
+            <label class="form-label" style="color:var(--text2)">Photo 2</label>
+            {{ form.image2 }}
+          </div>
+          <div class="form-group">
+            <label class="form-label" style="color:var(--text2)">Photo 3</label>
+            {{ form.image3 }}
+          </div>
+        </div>
+      </div>
 
-            <div style="border:1px solid #222;padding:24px;margin-bottom:2px;">
-                <p style="color:#555;font-size:0.7rem;letter-spacing:3px;text-transform:uppercase;margin-bottom:16px;">01 — Basic Info</p>
-                <div class="row g-3">
-                    <div class="col-md-8">
-                        <label class="form-label">Venue Name *</label>
-                        {{ form.name }}
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Type *</label>
-                        {{ form.venue_type }}
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Area *</label>
-                        {{ form.area }}
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">City *</label>
-                        {{ form.city }}
-                    </div>
-                    <div class="col-12">
-                        <label class="form-label">Address</label>
-                        {{ form.address }}
-                    </div>
-                </div>
-            </div>
-
-            <div style="border:1px solid #222;border-top:none;padding:24px;margin-bottom:2px;">
-                <p style="color:#555;font-size:0.7rem;letter-spacing:3px;text-transform:uppercase;margin-bottom:16px;">02 — Sports & Timing</p>
-                <div class="row g-3">
-                    <div class="col-md-6">
-                        <label class="form-label">Sports Available</label>
-                        {{ form.sports }}
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Opening Hours</label>
-                        {{ form.opening_hours }}
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Entry Fee (grounds)</label>
-                        {{ form.entry_fee }}
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Price per Hour (turfs)</label>
-                        {{ form.price_per_hour }}
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Contact Number</label>
-                        {{ form.contact }}
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Google Maps Link</label>
-                        {{ form.map_link }}
-                    </div>
-                </div>
-            </div>
-
-            <div style="border:1px solid #222;border-top:none;padding:24px;margin-bottom:2px;">
-                <p style="color:#555;font-size:0.7rem;letter-spacing:3px;text-transform:uppercase;margin-bottom:16px;">03 — Description</p>
-                <label class="form-label">Description</label>
-                {{ form.description }}
-            </div>
-
-            <div style="border:1px solid #222;border-top:none;padding:24px;margin-bottom:2px;">
-                <p style="color:#555;font-size:0.7rem;letter-spacing:3px;text-transform:uppercase;margin-bottom:4px;">04 — Photos</p>
-                <p style="color:#333;font-size:0.7rem;letter-spacing:1px;margin-bottom:16px;">Upload up to 3 photos</p>
-                <div class="row g-3">
-                    <div class="col-md-4">
-                        <label class="form-label">Photo 1</label>
-                        {{ form.image1 }}
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Photo 2</label>
-                        {{ form.image2 }}
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Photo 3</label>
-                        {{ form.image3 }}
-                    </div>
-                </div>
-            </div>
-
-            <div style="border:1px solid #222;border-top:none;padding:24px;">
-                <button type="submit" class="btn btn-p1 w-100 btn-lg" style="font-size:1rem;padding:16px;letter-spacing:3px;">
-                    🏟️ Add Venue!
-                </button>
-                <a href="{% url 'venues_home' %}" class="btn btn-p1-outline w-100 mt-2" style="padding:12px;letter-spacing:2px;">
-                    Cancel
-                </a>
-            </div>
-        </form>
-
-        <script>
-        document.getElementById('id_map_link').addEventListener('change', function() {
-            const url = this.value;
-            const match = url.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
-            if (match) {
-                alert('📍 Location found! Lat: ' + match[1] + ', Lng: ' + match[2]);
-            }
-        });
-        </script>
-
-    </div>
+      <button type="submit" class="modal-submit">ADD VENUE →</button>
+    </form>
+  </div>
 </div>
-
 {% endblock %}

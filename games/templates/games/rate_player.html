@@ -1,84 +1,55 @@
 {% extends 'base.html' %}
-{% block title %}Rate {{ rated_user.username }} — Player One{% endblock %}
+{% block title %}Rate {{ rated_user.username }} — PlayerOne{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-5">
+<div style="max-width:480px;margin:0 auto;padding:4rem 1.5rem">
+  <div class="search-card" style="text-align:center">
+    <div class="modal-title">⭐ RATE PLAYER</div>
+    <p style="color:var(--text2);font-size:.85rem;margin-bottom:1.5rem">
+      How was your experience playing with<br>
+      <strong style="color:var(--text)">{{ rated_user.username }}</strong>
+      in <strong style="color:var(--text)">{{ post.title }}</strong>?
+    </p>
 
-        <div style="border-bottom:1px solid #222;padding-bottom:20px;margin-bottom:32px;text-align:center;">
-            <h1 style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:3rem;text-transform:uppercase;letter-spacing:2px;color:#fff;margin:0;">
-                ⭐ Rate Player
-            </h1>
+    <form method="post">
+      {% csrf_token %}
+      <div style="margin-bottom:1.5rem">
+        <div class="d-flex justify-content-center gap-2" id="stars" style="font-size:2.5rem">
+          {% for i in "12345" %}
+          <span class="star" data-value="{{ i }}" style="cursor:pointer;opacity:1">⭐</span>
+          {% endfor %}
         </div>
+        <input type="hidden" name="score" id="score-input" value="5">
+      </div>
 
-        <div style="border:1px solid #222;padding:32px;text-align:center;">
-            <p style="color:#555;font-size:0.75rem;letter-spacing:2px;text-transform:uppercase;margin:0 0 8px 0;">
-                How was your experience with
-            </p>
-            <h3 style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:2rem;text-transform:uppercase;letter-spacing:2px;color:var(--p1-green);margin:0 0 4px 0;">
-                {{ rated_user.username }}
-            </h3>
-            <p style="color:#444;font-size:0.75rem;letter-spacing:1px;text-transform:uppercase;margin:0 0 24px 0;">
-                in {{ post.title }}
-            </p>
+      <div class="form-group" style="text-align:left">
+        <label class="form-label">Comment (optional)</label>
+        <input type="text" name="comment" class="form-input" placeholder="Great teammate, very punctual...">
+      </div>
 
-            <form method="post">
-                {% csrf_token %}
-
-                <!-- Star Rating -->
-                <div style="margin-bottom:24px;">
-                    <div class="d-flex justify-content-center gap-3" id="stars" style="font-size:2.5rem;">
-                        {% for i in "12345" %}
-                        <span class="star" data-value="{{ i }}" style="cursor:pointer;opacity:1;">⭐</span>
-                        {% endfor %}
-                    </div>
-                    <input type="hidden" name="score" id="score-input" value="5">
-                </div>
-
-                <!-- Comment -->
-                <div style="margin-bottom:24px;text-align:left;">
-                    <label class="form-label">Comment (optional)</label>
-                    <input type="text" name="comment" class="form-control" placeholder="Great teammate, very punctual...">
-                </div>
-
-                <button type="submit" class="btn btn-p1 w-100" style="padding:14px;font-size:1rem;letter-spacing:3px;">
-                    Submit Rating 🚀
-                </button>
-                <a href="{% url 'post_detail' post.pk %}" class="btn btn-p1-outline w-100 mt-2" style="padding:12px;letter-spacing:2px;">
-                    Cancel
-                </a>
-            </form>
-        </div>
-
-    </div>
+      <button type="submit" class="modal-submit">SUBMIT RATING →</button>
+      <a href="{% url 'post_detail' post.pk %}" class="btn-ghost" style="width:100%;justify-content:center;margin-top:.75rem;text-decoration:none">Cancel</a>
+    </form>
+  </div>
 </div>
 
 <script>
 const stars = document.querySelectorAll('.star');
 let selected = 5;
-
 stars.forEach(s => s.style.opacity = '1');
-
 stars.forEach(star => {
-    star.addEventListener('click', () => {
-        selected = parseInt(star.dataset.value);
-        document.getElementById('score-input').value = selected;
-        stars.forEach(s => {
-            s.style.opacity = parseInt(s.dataset.value) <= selected ? '1' : '0.3';
-        });
-    });
-    star.addEventListener('mouseover', () => {
-        const val = parseInt(star.dataset.value);
-        stars.forEach(s => {
-            s.style.opacity = parseInt(s.dataset.value) <= val ? '1' : '0.3';
-        });
-    });
-    star.addEventListener('mouseout', () => {
-        stars.forEach(s => {
-            s.style.opacity = parseInt(s.dataset.value) <= selected ? '1' : '0.3';
-        });
-    });
+  star.addEventListener('click', () => {
+    selected = parseInt(star.dataset.value);
+    document.getElementById('score-input').value = selected;
+    stars.forEach(s => { s.style.opacity = parseInt(s.dataset.value) <= selected ? '1' : '0.3'; });
+  });
+  star.addEventListener('mouseover', () => {
+    const val = parseInt(star.dataset.value);
+    stars.forEach(s => { s.style.opacity = parseInt(s.dataset.value) <= val ? '1' : '0.3'; });
+  });
+  star.addEventListener('mouseout', () => {
+    stars.forEach(s => { s.style.opacity = parseInt(s.dataset.value) <= selected ? '1' : '0.3'; });
+  });
 });
 </script>
-
 {% endblock %}

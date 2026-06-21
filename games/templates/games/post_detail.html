@@ -1,277 +1,252 @@
 {% extends 'base.html' %}
-{% block title %}{{ post.title }} — Player One{% endblock %}
+{% block title %}{{ post.title }} — PlayerOne{% endblock %}
+{% block nav_home %}active-nav{% endblock %}
 
 {% block content %}
-
-<!-- Breadcrumb -->
-<p style="color:#555;font-size:0.75rem;letter-spacing:2px;text-transform:uppercase;margin-bottom:24px;">
-    <a href="{% url 'home' %}" style="color:#555;text-decoration:none;">Home</a> / {{ post.get_sport_display }} / {{ post.title }}
-</p>
-
-<div class="row g-4">
-    <!-- Left: Main Content -->
-    <div class="col-lg-8">
-
-        <!-- Post Header -->
-        <div style="border:1px solid #222;padding:32px;margin-bottom:16px;">
-            <div class="d-flex justify-content-between align-items-start mb-3">
-                <span class="badge {% if post.mode == 'outdoor' %}badge-outdoor{% else %}badge-online{% endif %} px-2 py-1">
-                    {% if post.mode == 'outdoor' %}🏏 Outdoor{% else %}🎮 Online{% endif %}
-                </span>
-                <span class="sport-tag" style="color:#fff;">{{ post.get_sport_display }}</span>
-            </div>
-
-            <div class="d-flex justify-content-between align-items-start">
-                <h1 style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:clamp(2rem,5vw,3.5rem);text-transform:uppercase;letter-spacing:2px;color:#fff;line-height:1;margin-bottom:12px;">
-                    {{ post.title }}
-                </h1>
-                {% if user == post.posted_by %}
-                <div class="d-flex gap-2 ms-3">
-                    <a href="{% url 'edit_post' post.pk %}" class="btn btn-p1-outline btn-sm">✏️ Edit</a>
-                    {% if post.status == 'open' or post.status == 'full' %}
-                    <a href="{% url 'toggle_post' post.pk %}" class="btn btn-sm" style="border:1px solid #ffaa00;color:#ffaa00;border-radius:0;font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:1px;text-transform:uppercase;">🔒 Close</a>
-                    {% else %}
-                    <a href="{% url 'toggle_post' post.pk %}" class="btn btn-sm" style="border:1px solid var(--p1-green);color:var(--p1-green);border-radius:0;font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:1px;text-transform:uppercase;">🔓 Reopen</a>
-                    {% endif %}
-                </div>
-                {% endif %}
-            </div>
-
-            <p style="color:#555;font-size:0.8rem;letter-spacing:1px;text-transform:uppercase;">
-                Posted by <a href="{% url 'player_profile' post.posted_by.username %}" style="color:var(--p1-green);text-decoration:none;">{{ post.posted_by.username }}</a>
-                · {{ post.created_at|timesince }} ago
-            </p>
-
-            {% if post.description %}
-            <p style="color:#aaa;margin-top:16px;padding-top:16px;border-top:1px solid #222;">{{ post.description }}</p>
-            {% endif %}
-        </div>
-
-        <!-- Stats Grid -->
-        <div class="row g-0 mb-4" style="border:1px solid #222;">
-            <div class="col-6 col-md-3 text-center py-3" style="border-right:1px solid #222;border-bottom:1px solid #222;">
-                <p style="color:#555;font-size:0.65rem;letter-spacing:2px;text-transform:uppercase;margin:0;">Have</p>
-                <p style="font-family:'Barlow Condensed',sans-serif;font-size:2rem;font-weight:900;color:#fff;margin:0;">{{ post.players_have }}</p>
-            </div>
-            <div class="col-6 col-md-3 text-center py-3" style="border-right:1px solid #222;border-bottom:1px solid #222;">
-                <p style="color:#555;font-size:0.65rem;letter-spacing:2px;text-transform:uppercase;margin:0;">Need</p>
-                <p style="font-family:'Barlow Condensed',sans-serif;font-size:2rem;font-weight:900;color:var(--p1-green);margin:0;">
-                    {% if post.is_full %}✅{% else %}{{ post.spots_left }}{% endif %}
-                </p>
-            </div>
-            <div class="col-6 col-md-3 text-center py-3" style="border-right:1px solid #222;">
-                <p style="color:#555;font-size:0.65rem;letter-spacing:2px;text-transform:uppercase;margin:0;">Level</p>
-                <p style="font-family:'Barlow Condensed',sans-serif;font-size:1.3rem;font-weight:900;color:#fff;margin:0;">{{ post.get_skill_level_display }}</p>
-            </div>
-            <div class="col-6 col-md-3 text-center py-3">
-                <p style="color:#555;font-size:0.65rem;letter-spacing:2px;text-transform:uppercase;margin:0;">Status</p>
-                <p style="font-family:'Barlow Condensed',sans-serif;font-size:1.3rem;font-weight:900;margin:0;
-                    {% if post.status == 'open' %}color:var(--p1-green);
-                    {% elif post.status == 'full' %}color:#ffaa00;
-                    {% else %}color:#ff4444;{% endif %}">
-                    {{ post.get_status_display|upper }}
-                </p>
-            </div>
-        </div>
-
-        <!-- Location / Game Info -->
-        {% if post.mode == 'outdoor' and post.location %}
-        <div style="border:1px solid #222;padding:20px;margin-bottom:16px;">
-            <p style="color:#555;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;">📍 Location</p>
-            <p style="font-family:'Barlow Condensed',sans-serif;font-size:1.3rem;font-weight:800;color:#fff;text-transform:uppercase;margin:0;">
-                {{ post.location }}{% if post.city %}, {{ post.city }}{% endif %}
-            </p>
-            {% if post.map_link %}
-            <a href="{{ post.map_link }}" target="_blank" class="btn btn-p1-outline btn-sm mt-3">📍 Open in Google Maps</a>
-            {% endif %}
-            {% if post.whatsapp_link and user.is_authenticated %}
-            {% for jr in post.join_requests.all %}
-            {% if jr.player == user and jr.status == 'accepted' or user == post.posted_by %}
-            <a href="{{ post.whatsapp_link }}" target="_blank" class="btn btn-sm mt-2" style="background:#25D366;color:#fff;border-radius:0;font-family:'Barlow Condensed',sans-serif;font-weight:800;letter-spacing:2px;text-transform:uppercase;padding:10px 20px;border:none;">
-                💬 Join WhatsApp Group
-            </a>
-            {% endif %}
-            {% endfor %}
-            {% endif %}
-        </div>
-        {% endif %}
-
-        {% if post.play_date or post.play_time %}
-        <div class="row g-0 mb-4" style="border:1px solid #222;">
-            {% if post.play_date %}
-            <div class="col-6 p-3" style="border-right:1px solid #222;">
-                <p style="color:#555;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase;margin:0;">📅 Date</p>
-                <p style="font-family:'Barlow Condensed',sans-serif;font-size:1.2rem;font-weight:800;color:#fff;margin:0;">{{ post.play_date }}</p>
-            </div>
-            {% endif %}
-            {% if post.play_time %}
-            <div class="col-6 p-3">
-                <p style="color:#555;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase;margin:0;">⏰ Time</p>
-                <p style="font-family:'Barlow Condensed',sans-serif;font-size:1.2rem;font-weight:800;color:#fff;margin:0;">{{ post.play_time }}</p>
-            </div>
-            {% endif %}
-        </div>
-        {% endif %}
-
-        {% if post.mode == 'online' %}
-        <div class="row g-0 mb-4" style="border:1px solid #222;">
-            {% if post.game_platform %}
-            <div class="col-6 p-3" style="border-right:1px solid #222;">
-                <p style="color:#555;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase;margin:0;">🖥️ Platform</p>
-                <p style="font-family:'Barlow Condensed',sans-serif;font-size:1.2rem;font-weight:800;color:#fff;margin:0;">{{ post.game_platform }}</p>
-            </div>
-            {% endif %}
-            {% if post.game_id %}
-            <div class="col-6 p-3">
-                <p style="color:#555;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase;margin:0;">🎮 Game ID</p>
-                <p style="font-family:'Barlow Condensed',sans-serif;font-size:1.2rem;font-weight:800;color:#fff;margin:0;">{{ post.game_id }}</p>
-            </div>
-            {% endif %}
-        </div>
-        {% endif %}
-
-        <!-- Comments -->
-        <div style="border:1px solid #222;padding:24px;margin-bottom:16px;">
-            <h4 style="font-family:'Barlow Condensed',sans-serif;font-weight:900;letter-spacing:3px;text-transform:uppercase;color:var(--p1-green);margin-bottom:20px;">
-                💬 Comments ({{ post.comments.count }})
-            </h4>
-
-            {% for comment in post.comments.all %}
-            <div style="border-bottom:1px solid #1a1a1a;padding-bottom:12px;margin-bottom:12px;">
-                <div class="d-flex justify-content-between">
-                    <strong style="color:var(--p1-green);font-family:'Barlow Condensed',sans-serif;letter-spacing:1px;text-transform:uppercase;">
-                        {{ comment.author.username }}
-                    </strong>
-                    <span style="color:#444;font-size:0.75rem;">{{ comment.created_at|timesince }} ago</span>
-                </div>
-                <p style="color:#aaa;margin:4px 0 0 0;">{{ comment.text }}</p>
-            </div>
-            {% empty %}
-            <p style="color:#444;letter-spacing:1px;text-transform:uppercase;font-size:0.8rem;">No comments yet. Be the first!</p>
-            {% endfor %}
-
-            {% if user.is_authenticated %}
-            <form method="post" class="mt-4">
-                {% csrf_token %}
-                <div class="input-group">
-                    {{ comment_form.text }}
-                    <button type="submit" name="comment" class="btn btn-p1">Post</button>
-                </div>
-            </form>
-            {% endif %}
-        </div>
-
-        <!-- Rate Players -->
-        {% if user.is_authenticated %}
-        <div style="border:1px solid #222;padding:24px;margin-bottom:16px;">
-            <h4 style="font-family:'Barlow Condensed',sans-serif;font-weight:900;letter-spacing:3px;text-transform:uppercase;color:var(--p1-green);margin-bottom:16px;">
-                ⭐ Rate Players
-            </h4>
-            {% for jr in post.join_requests.all %}
-            {% if jr.player == user and jr.status == 'accepted' %}
-            <div class="d-flex justify-content-between align-items-center py-2" style="border-bottom:1px solid #1a1a1a;">
-                <a href="{% url 'player_profile' post.posted_by.username %}" style="color:#fff;text-decoration:none;font-family:'Barlow Condensed',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:1px;">
-                    {{ post.posted_by.username }} <span style="color:#555;">(organizer)</span>
-                </a>
-                <a href="{% url 'rate_player' post.posted_by.username post.pk %}" class="btn btn-p1 btn-sm">⭐ Rate</a>
-            </div>
-            {% endif %}
-            {% endfor %}
-
-            {% if user == post.posted_by %}
-            {% for jr in post.join_requests.all %}
-            {% if jr.status == 'accepted' %}
-            <div class="d-flex justify-content-between align-items-center py-2" style="border-bottom:1px solid #1a1a1a;">
-                <a href="{% url 'player_profile' jr.player.username %}" style="color:#fff;text-decoration:none;font-family:'Barlow Condensed',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:1px;">
-                    {{ jr.player.username }}
-                </a>
-                <a href="{% url 'rate_player' jr.player.username post.pk %}" class="btn btn-p1 btn-sm">⭐ Rate</a>
-            </div>
-            {% endif %}
-            {% endfor %}
-            {% endif %}
-        </div>
-        {% endif %}
-
-    </div>
-
-    <!-- Right: Sidebar -->
-    <div class="col-lg-4">
-
-        <!-- Join Card -->
-        {% if user.is_authenticated and user != post.posted_by and post.status == 'open' %}
-        <div style="border:1px solid var(--p1-green);padding:24px;margin-bottom:16px;">
-            <h4 style="font-family:'Barlow Condensed',sans-serif;font-weight:900;letter-spacing:3px;text-transform:uppercase;color:var(--p1-green);margin-bottom:16px;">
-                🙋 Want to Join?
-            </h4>
-            {% if user_request %}
-            <div style="padding:12px;border:1px solid
-                {% if user_request.status == 'accepted' %}var(--p1-green)
-                {% elif user_request.status == 'rejected' %}#ff4444
-                {% else %}#ffaa00{% endif %};">
-                <p style="font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin:0;
-                    {% if user_request.status == 'accepted' %}color:var(--p1-green);
-                    {% elif user_request.status == 'rejected' %}color:#ff4444;
-                    {% else %}color:#ffaa00;{% endif %}">
-                    Request {{ user_request.get_status_display|upper }}
-                </p>
-            </div>
-            {% else %}
-            <form method="post">
-                {% csrf_token %}
-                <div class="mb-3">
-                    <label class="form-label">Message (optional)</label>
-                    {{ join_form.message }}
-                </div>
-                <button type="submit" name="join" class="btn btn-p1 w-100">Send Request 🚀</button>
-            </form>
-            {% endif %}
-        </div>
-        {% endif %}
-
-        {% if not user.is_authenticated %}
-        <div style="border:1px solid #222;padding:24px;margin-bottom:16px;text-align:center;">
-            <p style="color:#555;letter-spacing:1px;text-transform:uppercase;font-size:0.8rem;">Login to join this game</p>
-            <a href="{% url 'login' %}" class="btn btn-p1 w-100">🔑 Login</a>
-        </div>
-        {% endif %}
-
-        <!-- Join Requests (owner only) -->
-        {% if join_requests %}
-        <div style="border:1px solid #222;padding:24px;margin-bottom:16px;">
-            <h5 style="font-family:'Barlow Condensed',sans-serif;font-weight:900;letter-spacing:2px;text-transform:uppercase;color:var(--p1-green);margin-bottom:16px;">
-                📥 Requests ({{ join_requests.count }})
-            </h5>
-            {% for jr in join_requests %}
-            <div style="background:#0a0a0a;padding:12px;margin-bottom:8px;border:1px solid #1a1a1a;">
-                <div class="d-flex justify-content-between align-items-center mb-1">
-                    <a href="{% url 'player_profile' jr.player.username %}" style="color:#fff;text-decoration:none;font-family:'Barlow Condensed',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:1px;">
-                        {{ jr.player.username }}
-                    </a>
-                    <span style="font-family:'Barlow Condensed',sans-serif;font-size:0.75rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;
-                        {% if jr.status == 'accepted' %}color:var(--p1-green);
-                        {% elif jr.status == 'rejected' %}color:#ff4444;
-                        {% else %}color:#ffaa00;{% endif %}">
-                        {{ jr.get_status_display|upper }}
-                    </span>
-                </div>
-                {% if jr.message %}
-                <p style="color:#555;font-size:0.8rem;margin:4px 0;">{{ jr.message }}</p>
-                {% endif %}
-                {% if jr.status == 'pending' %}
-                <div class="d-flex gap-2 mt-2">
-                    <a href="{% url 'manage_request' jr.pk 'accept' %}" class="btn btn-p1 btn-sm flex-grow-1">✅ Accept</a>
-                    <a href="{% url 'manage_request' jr.pk 'reject' %}" class="btn btn-sm flex-grow-1" style="border:1px solid #ff4444;color:#ff4444;border-radius:0;font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:1px;text-transform:uppercase;">❌ Reject</a>
-                </div>
-                {% endif %}
-            </div>
-            {% endfor %}
-        </div>
-        {% endif %}
-
-    </div>
+<div style="max-width:1400px;margin:0 auto;padding:2rem 3rem 0">
+  <div class="section-eyebrow">
+    <a href="{% url 'home' %}" style="color:var(--lime)">Home</a> / {{ post.get_sport_display }} / {{ post.title }}
+  </div>
 </div>
 
-<a href="{% url 'home' %}" class="btn btn-p1-outline mt-3">← Back to Home</a>
+<div style="max-width:1400px;margin:0 auto;padding:1rem 3rem 5rem">
+  <div class="row g-4">
 
+    <!-- MAIN -->
+    <div class="col-lg-8">
+
+      <div class="turf-detail show" style="border-top:none">
+        <div class="turf-detail-inner">
+
+          <div class="td-section-title" style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:1rem">
+            <span>{{ post.title|upper }}</span>
+            {% if user == post.posted_by %}
+            <div style="display:flex;gap:.5rem">
+              <a href="{% url 'edit_post' post.pk %}" class="share-btn">✏️ Edit</a>
+              {% if post.status == 'open' or post.status == 'full' %}
+              <a href="{% url 'toggle_post' post.pk %}" class="share-btn" style="border-color:var(--orange);color:var(--orange)">🔒 Close</a>
+              {% else %}
+              <a href="{% url 'toggle_post' post.pk %}" class="share-btn" style="border-color:var(--lime);color:var(--lime)">🔓 Reopen</a>
+              {% endif %}
+            </div>
+            {% endif %}
+          </div>
+
+          <div style="grid-column:1/-1;display:flex;gap:.5rem;align-items:center;margin-bottom:.5rem">
+            <span class="result-badge {{ post.sport }}">{% if post.mode == 'outdoor' %}🏏{% else %}🎮{% endif %} {{ post.get_sport_display }}</span>
+            <span style="color:var(--text2);font-size:.78rem">
+              by <a href="{% url 'player_profile' post.posted_by.username %}" style="color:var(--lime)">{{ post.posted_by.username }}</a>
+              · {{ post.created_at|timesince }} ago
+            </span>
+          </div>
+
+          {% if post.description %}
+          <div class="td-info-block" style="grid-column:1/-1">
+            <div class="td-info-label">Description</div>
+            <div class="td-info-value" style="font-weight:400;line-height:1.6">{{ post.description }}</div>
+          </div>
+          {% endif %}
+
+          <div class="td-info-block">
+            <div class="td-info-label">Players Have</div>
+            <div class="td-info-value">{{ post.players_have }}</div>
+          </div>
+          <div class="td-info-block">
+            <div class="td-info-label">Players Needed</div>
+            <div class="td-info-value" style="color:var(--lime)">{% if post.is_full %}✅ Full{% else %}{{ post.spots_left }}{% endif %}</div>
+          </div>
+          <div class="td-info-block">
+            <div class="td-info-label">Skill Level</div>
+            <div class="td-info-value">{{ post.get_skill_level_display }}</div>
+          </div>
+
+          {% if post.mode == 'outdoor' %}
+          {% if post.location %}
+          <div class="td-info-block" style="grid-column:1/-1">
+            <div class="td-info-label">📍 Location</div>
+            <div class="td-info-value">{{ post.location }}{% if post.city %}, {{ post.city }}{% endif %}</div>
+          </div>
+          {% endif %}
+          {% if post.play_date %}
+          <div class="td-info-block">
+            <div class="td-info-label">📅 Date</div>
+            <div class="td-info-value">{{ post.play_date }}</div>
+          </div>
+          {% endif %}
+          {% if post.play_time %}
+          <div class="td-info-block">
+            <div class="td-info-label">⏰ Time</div>
+            <div class="td-info-value">{{ post.play_time }}</div>
+          </div>
+          {% endif %}
+          {% endif %}
+
+          {% if post.mode == 'online' %}
+          {% if post.game_platform %}
+          <div class="td-info-block">
+            <div class="td-info-label">🖥️ Platform</div>
+            <div class="td-info-value">{{ post.game_platform }}</div>
+          </div>
+          {% endif %}
+          {% if post.game_id %}
+          <div class="td-info-block">
+            <div class="td-info-label">🎮 Game ID</div>
+            <div class="td-info-value">{{ post.game_id }}</div>
+          </div>
+          {% endif %}
+          {% endif %}
+
+          <div class="td-actions">
+            {% if post.map_link %}
+            <a href="{{ post.map_link }}" target="_blank" class="td-map-btn" style="text-decoration:none">📍 Open in Maps</a>
+            {% endif %}
+            {% if post.whatsapp_link %}
+              {% if user == post.posted_by %}
+              <a href="{{ post.whatsapp_link }}" target="_blank" class="td-book-btn" style="text-decoration:none;background:#25D366">💬 WhatsApp Group</a>
+              {% else %}
+                {% for jr in post.join_requests.all %}
+                  {% if jr.player == user and jr.status == 'accepted' %}
+                  <a href="{{ post.whatsapp_link }}" target="_blank" class="td-book-btn" style="text-decoration:none;background:#25D366">💬 WhatsApp Group</a>
+                  {% endif %}
+                {% endfor %}
+              {% endif %}
+            {% endif %}
+          </div>
+
+        </div>
+      </div>
+
+      <!-- COMMENTS -->
+      <div style="margin-top:1.5rem">
+        <div class="section-eyebrow">Discussion</div>
+        <div class="section-title" style="font-size:2.2rem;margin-bottom:1rem">COMMENTS <span class="dim">({{ post.comments.count }})</span></div>
+
+        <div class="results-list">
+          {% for comment in post.comments.all %}
+          <div class="result-row" style="cursor:default">
+            <div class="result-avatar">{{ comment.author.username|slice:":2"|upper }}</div>
+            <div class="result-info">
+              <div class="result-name">{{ comment.author.username }}</div>
+              <div class="result-detail">{{ comment.text }}</div>
+            </div>
+            <div style="font-size:.65rem;color:var(--muted);font-family:'DM Mono',monospace">{{ comment.created_at|timesince }} ago</div>
+          </div>
+          {% empty %}
+          <div style="padding:1.5rem;color:var(--text2);font-size:.85rem;background:var(--dark2)">No comments yet. Be the first!</div>
+          {% endfor %}
+        </div>
+
+        {% if user.is_authenticated %}
+        <form method="post" style="margin-top:1rem;display:flex;gap:.5rem">
+          {% csrf_token %}
+          {{ comment_form.text }}
+          <button type="submit" name="comment" class="btn-p1" style="white-space:nowrap">Post</button>
+        </form>
+        {% endif %}
+      </div>
+
+      <!-- RATE PLAYERS -->
+      {% if user.is_authenticated %}
+      <div style="margin-top:2.5rem">
+        <div class="section-eyebrow">After the Game</div>
+        <div class="section-title" style="font-size:2.2rem;margin-bottom:1rem">RATE <span class="dim">PLAYERS</span></div>
+        <div class="results-list">
+          {% for jr in post.join_requests.all %}
+          {% if jr.player == user and jr.status == 'accepted' %}
+          <div class="result-row">
+            <div class="result-avatar">{{ post.posted_by.username|slice:":2"|upper }}</div>
+            <div class="result-info">
+              <div class="result-name">{{ post.posted_by.username }}</div>
+              <div class="result-detail">Organizer</div>
+            </div>
+            <a href="{% url 'rate_player' post.posted_by.username post.pk %}" class="result-action" style="text-decoration:none">⭐ Rate</a>
+          </div>
+          {% endif %}
+          {% endfor %}
+          {% if user == post.posted_by %}
+            {% for jr in post.join_requests.all %}
+            {% if jr.status == 'accepted' %}
+            <div class="result-row">
+              <div class="result-avatar">{{ jr.player.username|slice:":2"|upper }}</div>
+              <div class="result-info">
+                <div class="result-name">{{ jr.player.username }}</div>
+                <div class="result-detail">Player</div>
+              </div>
+              <a href="{% url 'rate_player' jr.player.username post.pk %}" class="result-action" style="text-decoration:none">⭐ Rate</a>
+            </div>
+            {% endif %}
+            {% endfor %}
+          {% endif %}
+        </div>
+      </div>
+      {% endif %}
+
+    </div>
+
+    <!-- SIDEBAR -->
+    <div class="col-lg-4">
+
+      {% if user.is_authenticated and user != post.posted_by and post.status == 'open' %}
+      <div class="search-card">
+        <div class="modal-title" style="font-size:1.5rem">WANT TO JOIN?</div>
+        {% if user_request %}
+        <div class="price-calc" style="text-align:center">
+          <p style="margin:0;font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:.05em;
+            {% if user_request.status == 'accepted' %}color:var(--lime)
+            {% elif user_request.status == 'rejected' %}color:var(--red)
+            {% else %}color:var(--orange){% endif %}">
+            REQUEST {{ user_request.get_status_display|upper }}
+          </p>
+        </div>
+        {% else %}
+        <form method="post">
+          {% csrf_token %}
+          <div class="form-group">
+            <label class="form-label">Message (optional)</label>
+            {{ join_form.message }}
+          </div>
+          <button type="submit" name="join" class="btn-p1" style="width:100%;justify-content:center">SEND REQUEST →</button>
+        </form>
+        {% endif %}
+      </div>
+      {% endif %}
+
+      {% if not user.is_authenticated %}
+      <div class="search-card" style="text-align:center">
+        <p style="color:var(--text2);font-size:.85rem;margin-bottom:1rem">Login to join this game</p>
+        <a href="{% url 'login' %}" class="btn-p1" style="width:100%;justify-content:center;text-decoration:none">🔑 LOGIN</a>
+      </div>
+      {% endif %}
+
+      {% if join_requests %}
+      <div class="search-card" style="margin-top:1rem">
+        <div class="modal-title" style="font-size:1.3rem">REQUESTS ({{ join_requests.count }})</div>
+        {% for jr in join_requests %}
+        <div style="background:var(--dark3);padding:.85rem;margin-bottom:.5rem;border:1px solid var(--border)">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.25rem">
+            <a href="{% url 'player_profile' jr.player.username %}" style="color:var(--text);font-weight:600;text-decoration:none;font-size:.9rem">{{ jr.player.username }}</a>
+            <span style="font-family:'DM Mono',monospace;font-size:.65rem;text-transform:uppercase;letter-spacing:.08em;
+              {% if jr.status == 'accepted' %}color:var(--lime)
+              {% elif jr.status == 'rejected' %}color:var(--red)
+              {% else %}color:var(--orange){% endif %}">
+              {{ jr.get_status_display }}
+            </span>
+          </div>
+          {% if jr.message %}<p style="color:var(--text2);font-size:.78rem;margin:.25rem 0">{{ jr.message }}</p>{% endif %}
+          {% if jr.status == 'pending' %}
+          <div style="display:flex;gap:.5rem;margin-top:.5rem">
+            <a href="{% url 'manage_request' jr.pk 'accept' %}" class="match-join-btn" style="flex:1;text-align:center">✅ Accept</a>
+            <a href="{% url 'manage_request' jr.pk 'reject' %}" class="match-join-btn" style="flex:1;text-align:center;border-color:var(--red);color:var(--red)">❌ Reject</a>
+          </div>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+    </div>
+  </div>
+
+  <a href="{% url 'home' %}" class="btn-ghost" style="margin-top:1.5rem;display:inline-flex;text-decoration:none">← Back to Games</a>
+</div>
 {% endblock %}
