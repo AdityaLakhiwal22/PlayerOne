@@ -1,314 +1,379 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Player One{% endblock %}</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --p1-green: #ccff00;
-            --p1-dark: #080808;
-            --p1-card: #111111;
-            --p1-border: #222222;
-            --p1-text: #e0e0e0;
-            --p1-muted: #666666;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{% block title %}Player One{% endblock %}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --lime:#C8FF00;
+  --lime-dim:#9fcc00;
+  --dark:#0a0a0a;
+  --dark2:#111111;
+  --dark3:#1a1a1a;
+  --dark4:#222222;
+  --mid:#333333;
+  --muted:#666666;
+  --faint:#444444;
+  --text:#f0f0f0;
+  --text2:#aaaaaa;
+  --border:rgba(255,255,255,0.08);
+  --border-lime:rgba(200,255,0,0.25);
+  --red:#ff4444;
+  --green:#4ade80;
+  --orange:#fb923c;
+}
+html{scroll-behavior:smooth}
+body{
+  background:var(--dark);
+  color:var(--text);
+  font-family:'DM Sans',sans-serif;
+  font-size:16px;
+  line-height:1.6;
+  overflow-x:hidden;
+  cursor:none;
+}
+a{color:inherit;text-decoration:none}
+a,button,input,select,textarea,.card,[role="button"]{cursor:none!important}
 
-        * { box-sizing: border-box; }
+/* ═══ CUSTOM CURSOR ═══ */
+#cur-dot{position:fixed;top:0;left:0;width:8px;height:8px;background:var(--lime);border-radius:50%;pointer-events:none;z-index:99999;transform:translate(-50%,-50%);transition:width .2s,height .2s,background .2s,opacity .2s;mix-blend-mode:difference}
+#cur-ring{position:fixed;top:0;left:0;width:38px;height:38px;border:1.5px solid rgba(200,255,0,.55);border-radius:50%;pointer-events:none;z-index:99998;transform:translate(-50%,-50%);transition:width .35s cubic-bezier(.22,1,.36,1),height .35s cubic-bezier(.22,1,.36,1),border-color .3s,border-radius .35s,opacity .2s}
+#cur-label{position:fixed;top:0;left:0;pointer-events:none;z-index:99997;transform:translate(-50%,-50%);font-family:'DM Mono',monospace;font-size:.52rem;letter-spacing:.18em;text-transform:uppercase;color:#000;opacity:0;transition:opacity .2s;white-space:nowrap}
+body.cur-magnetic #cur-dot{width:6px;height:6px;opacity:.6}
+body.cur-magnetic #cur-ring{border-color:rgba(200,255,0,1);border-radius:4px}
+body.cur-magnetic #cur-label{opacity:1}
+body.cur-click #cur-dot{width:14px;height:14px;background:#fff}
+body.cur-click #cur-ring{width:70px;height:70px;border-color:rgba(200,255,0,.3)}
+body.cur-text #cur-dot{width:3px;height:22px;border-radius:2px;background:var(--lime)}
+body.cur-text #cur-ring{opacity:0}
+body.cur-hidden #cur-dot,body.cur-hidden #cur-ring,body.cur-hidden #cur-label{opacity:0!important}
 
-        body {
-            background-color: var(--p1-dark);
-            color: var(--p1-text);
-            font-family: 'Barlow', sans-serif;
-        }
+/* ═══ NAV ═══ */
+nav{position:fixed;top:0;left:0;right:0;z-index:700;display:flex;align-items:center;justify-content:space-between;padding:0 2rem;height:64px;background:rgba(10,10,10,.92);backdrop-filter:blur(18px);border-bottom:1px solid var(--border)}
+.logo{font-family:'Bebas Neue',sans-serif;font-size:1.9rem;letter-spacing:.05em;color:var(--lime);line-height:1}
+.logo span{color:var(--text);opacity:.6}
+.nav-links{display:flex;gap:1.75rem;font-size:.82rem;letter-spacing:.08em;text-transform:uppercase;font-weight:500;color:var(--text2);align-items:center}
+.nav-links a:hover{color:var(--lime);transition:color .2s}
+.nav-links a.active-nav{color:var(--lime)}
+.nav-cta{background:var(--lime);color:#000;padding:.5rem 1.3rem;border-radius:2px;font-size:.78rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;transition:background .2s,transform .1s;display:inline-block}
+.nav-cta:hover{background:var(--lime-dim);transform:scale(.98);color:#000}
+.nav-ghost{background:transparent;border:1px solid var(--border);color:var(--text2);padding:.45rem 1.1rem;border-radius:2px;font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;transition:all .2s;font-family:'DM Mono',monospace}
+.nav-ghost:hover{border-color:var(--lime);color:var(--lime)}
+.nav-bell{position:relative;font-size:1.1rem;color:var(--text2);transition:color .2s;display:flex;align-items:center}
+.nav-bell:hover{color:var(--lime)}
+.notif-badge{display:inline-flex;align-items:center;justify-content:center;min-width:16px;height:16px;background:var(--red);color:#fff;border-radius:50%;font-size:.58rem;font-weight:700;position:absolute;top:-6px;right:-8px;font-family:'DM Mono',monospace;padding:0 3px}
+.nav-toggle{display:none;background:none;border:none;color:var(--text);font-size:1.4rem}
 
-        h1, h2, h3, h4, h5, h6 {
-            font-family: 'Barlow Condensed', sans-serif;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
+/* ═══ MARQUEE ═══ */
+.marquee-bar{position:fixed;top:64px;left:0;right:0;z-index:699;background:var(--lime);color:#000;height:26px;display:flex;align-items:center;overflow:hidden;font-family:'DM Mono',monospace;font-size:.66rem;font-weight:500;letter-spacing:.14em;text-transform:uppercase}
+.marquee-track{display:flex;gap:2.5rem;white-space:nowrap;animation:marquee 22s linear infinite}
+.marquee-track span{opacity:.7}
+.marquee-track b,.marquee-track a{opacity:1;color:#000}
+@keyframes marquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 
-        .announcement-bar {
-            background: var(--p1-green);
-            color: #000;
-            text-align: center;
-            padding: 8px;
-            font-family: 'Barlow Condensed', sans-serif;
-            font-weight: 700;
-            font-size: 0.85rem;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-        }
+/* page top spacer to clear fixed nav+marquee */
+.p1-page-top{padding-top:104px}
 
-        .navbar {
-            background: #000 !important;
-            border-bottom: 1px solid var(--p1-border);
-            padding: 0 !important;
-            min-height: 60px;
-        }
+/* ═══ BUTTONS ═══ */
+.btn-p1{background:var(--lime);color:#000!important;border:none;padding:.85rem 1.75rem;border-radius:2px;font-family:'Bebas Neue',sans-serif;font-size:1.15rem;letter-spacing:.06em;transition:background .2s,transform .1s;display:inline-flex;align-items:center;gap:.5rem;line-height:1}
+.btn-p1:hover{background:var(--lime-dim);transform:scale(.99);color:#000!important}
+.btn-p1-outline{background:transparent;color:var(--lime)!important;border:1px solid var(--lime);padding:.8rem 1.7rem;border-radius:2px;font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:.06em;transition:all .2s;display:inline-flex;align-items:center;gap:.5rem;line-height:1}
+.btn-p1-outline:hover{background:rgba(200,255,0,.08);color:var(--lime)!important}
+.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--text2);padding:.7rem 1.4rem;border-radius:2px;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;transition:all .2s;font-family:'DM Mono',monospace;display:inline-flex;align-items:center;gap:.4rem}
+.btn-ghost:hover{border-color:var(--lime);color:var(--lime)}
 
-        .navbar-brand {
-            font-family: 'Barlow Condensed', sans-serif;
-            font-size: 1.8rem;
-            font-weight: 900;
-            color: var(--p1-green) !important;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-        }
+/* ═══ FORMS ═══ */
+.form-control,.form-select{
+  background:var(--dark3);border:1px solid var(--border);color:var(--text);
+  border-radius:2px;font-family:'DM Sans',sans-serif;font-size:.9rem;
+  padding:.7rem .9rem;transition:border-color .2s,background .2s;
+}
+.form-control:focus,.form-select:focus{
+  background:var(--dark4);border-color:var(--lime);color:var(--text);
+  box-shadow:0 0 0 2px rgba(200,255,0,.08);outline:none;
+}
+.form-label{
+  font-size:.65rem;text-transform:uppercase;letter-spacing:.15em;
+  color:var(--lime);font-weight:600;font-family:'DM Mono',monospace;
+  margin-bottom:.4rem;display:block;
+}
+::placeholder{color:var(--muted)!important}
 
-        .nav-link {
-            color: #aaa !important;
-            font-family: 'Barlow Condensed', sans-serif;
-            font-weight: 600;
-            font-size: 0.85rem;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            padding: 0 14px !important;
-            height: 60px;
-            display: flex !important;
-            align-items: center;
-            border-bottom: 2px solid transparent;
-            transition: all 0.2s;
-        }
+/* ═══ CARDS ═══ */
+.card{background:var(--dark2);border:1px solid var(--border);border-radius:2px;transition:background .2s,border-color .2s}
+.card:hover{background:var(--dark3)}
+.badge-outdoor{background:#1a2e1a;color:var(--green);border:1px solid rgba(74,222,128,.25);font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.1em;border-radius:2px;padding:.25rem .6rem;text-transform:uppercase}
+.badge-online{background:#1a1a2e;color:#8899ff;border:1px solid rgba(136,153,255,.25);font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.1em;border-radius:2px;padding:.25rem .6rem;text-transform:uppercase}
+.sport-tag{background:var(--dark4);border:1px solid var(--border);color:var(--text2);font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.08em;border-radius:2px;padding:.25rem .6rem;text-transform:uppercase}
 
-        .nav-link:hover {
-            color: #fff !important;
-            border-bottom: 2px solid var(--p1-green);
-        }
+/* ═══ ALERTS ═══ */
+.alert{border-radius:2px;font-family:'DM Sans',sans-serif}
+.alert-success{background:rgba(200,255,0,.06);border:1px solid var(--border-lime);border-left:3px solid var(--lime);color:#d4ff66}
+.alert-danger{background:rgba(255,68,68,.06);border:1px solid rgba(255,68,68,.25);border-left:3px solid var(--red);color:#ff8888}
 
-        .btn-p1 {
-            background: var(--p1-green);
-            color: #000;
-            font-family: 'Barlow Condensed', sans-serif;
-            font-weight: 800;
-            font-size: 0.85rem;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            border: none;
-            border-radius: 0;
-            padding: 10px 24px;
-            transition: all 0.2s;
-        }
+/* ═══ TYPOGRAPHY ═══ */
+h1,h2,h3,h4,h5,h6{font-family:'Bebas Neue',sans-serif;letter-spacing:.02em;color:var(--text);font-weight:400;line-height:1.05}
+.label{font-family:'DM Mono',monospace;font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;color:var(--lime)}
+.text-g{color:var(--lime)}
+.text-dim{color:var(--text2)}
+.text-dimmer{color:var(--muted)}
+.s-open{color:var(--green)}
+.s-full{color:var(--orange)}
+.s-closed{color:var(--red)}
 
-        .btn-p1:hover {
-            background: #fff;
-            color: #000;
-        }
+/* ═══ FOOTER ═══ */
+.p1-footer{border-top:1px solid var(--border);background:var(--dark2);margin-top:5rem}
+.p1-footer-tagline{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.8rem,9vw,7rem);line-height:.92;letter-spacing:.01em;color:var(--dark4);padding:4rem 2rem 2.5rem;transition:color .4s}
+.p1-footer:hover .p1-footer-tagline{color:#2a2a16}
+.p1-footer-tagline em{font-style:normal;color:var(--lime)}
+.p1-footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:2.5rem;padding:0 2rem 2.5rem;border-bottom:1px solid var(--border)}
+.p1-footer-col-title{font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--lime);margin-bottom:1rem;display:block}
+.p1-footer-desc{font-size:.85rem;color:var(--text2);line-height:1.7;max-width:260px}
+.p1-footer-link{display:block;font-size:.82rem;color:var(--text2);padding:.3rem 0;transition:color .2s}
+.p1-footer-link:hover{color:var(--lime)}
+.p1-footer-bottom{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem;padding:1.25rem 2rem;font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.08em;color:var(--muted);text-transform:uppercase}
 
-        .btn-p1-outline {
-            background: transparent;
-            color: var(--p1-green);
-            font-family: 'Barlow Condensed', sans-serif;
-            font-weight: 700;
-            font-size: 0.85rem;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            border: 1px solid var(--p1-green);
-            border-radius: 0;
-            padding: 10px 24px;
-            transition: all 0.2s;
-        }
+/* ═══ MOBILE ═══ */
+@media(max-width:900px){
+  body{cursor:auto}
+  #cur-dot,#cur-ring,#cur-label{display:none!important}
+  .nav-links{display:none}
+  .nav-toggle{display:block}
+  .nav-cta{display:none}
+  .p1-footer-grid{grid-template-columns:1fr 1fr;gap:1.5rem}
+}
+@media(max-width:560px){
+  nav{padding:0 1rem}
+  .p1-footer-grid{grid-template-columns:1fr}
+}
 
-        .btn-p1-outline:hover {
-            background: var(--p1-green);
-            color: #000;
-        }
-
-        .card {
-            background: var(--p1-card);
-            border: 1px solid var(--p1-border);
-            border-radius: 0;
-        }
-
-        .card:hover {
-            border-color: var(--p1-green);
-            transition: border-color 0.2s;
-        }
-
-        .badge-outdoor {
-            background: #0a2e0a;
-            color: var(--p1-green);
-            border: 1px solid var(--p1-green);
-            font-family: 'Barlow Condensed', sans-serif;
-            font-weight: 700;
-            letter-spacing: 1px;
-            border-radius: 0;
-        }
-
-        .badge-online {
-            background: #0a0a2e;
-            color: #7b9fff;
-            border: 1px solid #7b9fff;
-            font-family: 'Barlow Condensed', sans-serif;
-            font-weight: 700;
-            letter-spacing: 1px;
-            border-radius: 0;
-        }
-
-        .sport-tag {
-            display: inline-block;
-            background: #1a1a1a;
-            border: 1px solid var(--p1-border);
-            padding: 3px 10px;
-            font-size: 0.8rem;
-            font-family: 'Barlow Condensed', sans-serif;
-            font-weight: 600;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            border-radius: 0;
-        }
-
-        .form-control, .form-select {
-            background: #1a1a1a;
-            border: 1px solid var(--p1-border);
-            color: var(--p1-text);
-            border-radius: 0;
-        }
-
-        .form-control:focus, .form-select:focus {
-            background: #1a1a1a;
-            border-color: var(--p1-green);
-            color: var(--p1-text);
-            box-shadow: 0 0 0 2px rgba(204,255,0,0.1);
-        }
-
-        .form-label {
-            color: #888;
-            font-size: 0.8rem;
-            font-family: 'Barlow Condensed', sans-serif;
-            font-weight: 600;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-        }
-
-        .alert { border-radius: 0; }
-
-        ::placeholder { color: #444 !important; }
-
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #111; }
-        ::-webkit-scrollbar-thumb { background: #333; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--p1-green); }
-
-        footer {
-            border-top: 1px solid var(--p1-border);
-            margin-top: 80px;
-        }
-
-        .notif-badge {
-            background: var(--p1-green);
-            color: #000;
-            font-size: 0.6rem;
-            font-weight: 800;
-            padding: 2px 5px;
-            border-radius: 0;
-            position: absolute;
-            top: 8px;
-            right: 4px;
-        }
-    </style>
+/* mobile dropdown menu */
+.mobile-menu{position:fixed;top:64px;left:0;right:0;background:var(--dark2);border-bottom:1px solid var(--border);z-index:650;display:none;flex-direction:column;padding:1rem 1.5rem;gap:.25rem}
+.mobile-menu.open{display:flex}
+.mobile-menu a{padding:.75rem 0;font-size:.95rem;letter-spacing:.05em;text-transform:uppercase;color:var(--text2);border-bottom:1px solid var(--border);font-family:'DM Mono',monospace}
+.mobile-menu a:last-child{border-bottom:none}
+</style>
 </head>
 <body>
 
-<!-- Announcement Bar -->
-{% if user.is_authenticated %}
-<div class="announcement-bar">
-    🏆 Welcome back, {{ user.username }}! — Find players near you today
-</div>
-{% else %}
-<div class="announcement-bar">
-    🎮 Player One — Find players for cricket, football, BGMI & more —
-    <a href="{% url 'register' %}" style="color:#000;font-weight:900;text-decoration:underline;">JOIN FREE</a>
-</div>
-{% endif %}
+<div id="cur-dot"></div>
+<div id="cur-ring"></div>
+<div id="cur-label"></div>
 
-<!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-dark sticky-top">
-    <div class="container-fluid px-4">
+<!-- NAV -->
+<nav>
+  <a href="{% url 'home' %}" class="logo">Player<span>One</span></a>
 
-        <!-- Logo -->
-        <a class="navbar-brand" href="/">P1</a>
+  <div class="nav-links">
+    {% if user.is_authenticated %}
+    <a href="{% url 'home' %}">Games</a>
+    <a href="{% url 'map_view' %}">Map</a>
+    <a href="{% url 'venues_home' %}">Venues</a>
+    <a href="{% url 'search_players' %}">Players</a>
+    <a href="{% url 'my_posts' %}">My Posts</a>
+    <a href="{% url 'notifications' %}" class="nav-bell">
+      🔔{% if unread_count %}<span class="notif-badge">{{ unread_count }}</span>{% endif %}
+    </a>
+    <a href="{% url 'player_profile' user.username %}" class="nav-ghost">{{ user.username }}</a>
+    <form method="post" action="{% url 'logout' %}" style="display:inline;margin:0">
+      {% csrf_token %}
+      <button type="submit" class="nav-ghost" style="background:none">Logout</button>
+    </form>
+    {% else %}
+    <a href="{% url 'home' %}">Home</a>
+    <a href="{% url 'venues_home' %}">Venues</a>
+    <a href="{% url 'search_players' %}">Players</a>
+    <a href="{% url 'map_view' %}">Map</a>
+    <a href="{% url 'login' %}">Login</a>
+    {% endif %}
+  </div>
 
-        <!-- Mobile toggle -->
-        <button class="navbar-toggler ms-auto" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" style="border-color:#333;">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+  {% if user.is_authenticated %}
+  <a href="{% url 'create_post' %}" class="nav-cta">+ Post a Game</a>
+  {% else %}
+  <a href="{% url 'register' %}" class="nav-cta">Join Free</a>
+  {% endif %}
 
-        <!-- Full navbar -->
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav me-auto">
-                {% if user.is_authenticated %}
-                <li class="nav-item"><a class="nav-link" href="{% url 'create_post' %}">+ Post</a></li>
-                <li class="nav-item"><a class="nav-link" href="{% url 'map_view' %}">Map</a></li>
-                <li class="nav-item"><a class="nav-link" href="{% url 'venues_home' %}">Venues</a></li>
-                <li class="nav-item"><a class="nav-link" href="{% url 'search_players' %}">Players</a></li>
-                <li class="nav-item"><a class="nav-link" href="{% url 'my_posts' %}">My Posts</a></li>
-                {% else %}
-                <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
-                <li class="nav-item"><a class="nav-link" href="{% url 'venues_home' %}">Venues</a></li>
-                <li class="nav-item"><a class="nav-link" href="{% url 'search_players' %}">Players</a></li>
-                {% endif %}
-            </ul>
-
-            <ul class="navbar-nav ms-auto align-items-center">
-                {% if user.is_authenticated %}
-                <li class="nav-item">
-                    <a class="nav-link position-relative" href="{% url 'notifications' %}">
-                        🔔
-                        {% if unread_count %}
-                        <span class="notif-badge">{{ unread_count }}</span>
-                        {% endif %}
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'player_profile' user.username %}">{{ user.username }}</a>
-                </li>
-                <li class="nav-item">
-                    <form method="post" action="{% url 'logout' %}" style="display:inline;">
-                        {% csrf_token %}
-                        <button type="submit" class="nav-link btn btn-link"
-                            style="color:#aaa;text-decoration:none;font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:0.85rem;letter-spacing:1.5px;text-transform:uppercase;">
-                            Logout
-                        </button>
-                    </form>
-                </li>
-                {% else %}
-                <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Login</a></li>
-                <li class="nav-item">
-                    <a href="{% url 'register' %}" class="btn btn-p1 ms-2">Join Now</a>
-                </li>
-                {% endif %}
-            </ul>
-        </div>
-
-    </div>
+  <button class="nav-toggle" onclick="document.getElementById('mobileMenu').classList.toggle('open')">☰</button>
 </nav>
 
-<div class="container mt-4">
-    {% for message in messages %}
-    <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}success{% endif %} alert-dismissible fade show"
-        style="border-left:3px solid var(--p1-green);background:#111;color:#fff;">
-        {{ message }}
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
-    </div>
-    {% endfor %}
-
-    {% block content %}{% endblock %}
+<div class="mobile-menu" id="mobileMenu">
+  {% if user.is_authenticated %}
+  <a href="{% url 'home' %}">🏠 Games</a>
+  <a href="{% url 'create_post' %}">+ Post a Game</a>
+  <a href="{% url 'map_view' %}">🗺️ Map</a>
+  <a href="{% url 'venues_home' %}">🏟️ Venues</a>
+  <a href="{% url 'search_players' %}">🔍 Find Players</a>
+  <a href="{% url 'my_posts' %}">📋 My Posts</a>
+  <a href="{% url 'notifications' %}">🔔 Notifications {% if unread_count %}({{ unread_count }}){% endif %}</a>
+  <a href="{% url 'player_profile' user.username %}">👤 {{ user.username }}</a>
+  <form method="post" action="{% url 'logout' %}">
+    {% csrf_token %}
+    <button type="submit" style="background:none;border:none;color:var(--text2);font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.05em;padding:.75rem 0;font-size:.95rem;width:100%;text-align:left">🚪 Logout</button>
+  </form>
+  {% else %}
+  <a href="{% url 'home' %}">🏠 Home</a>
+  <a href="{% url 'venues_home' %}">🏟️ Venues</a>
+  <a href="{% url 'search_players' %}">🔍 Find Players</a>
+  <a href="{% url 'map_view' %}">🗺️ Map</a>
+  <a href="{% url 'login' %}">🔑 Login</a>
+  <a href="{% url 'register' %}">Join Free</a>
+  {% endif %}
 </div>
 
-<footer class="py-5 text-center">
-    <p style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:1.2rem;letter-spacing:3px;color:var(--p1-green);">
-        PLAYER ONE
-    </p>
-    <p style="color:var(--p1-muted);font-size:0.8rem;letter-spacing:1px;">
-        FIND YOUR SQUAD — ONLINE OR ON THE GROUND — MADE IN INDIA 🇮🇳
-    </p>
+<!-- MARQUEE -->
+<div class="marquee-bar">
+  <div class="marquee-track">
+    {% if user.is_authenticated %}
+    <b>WELCOME BACK, {{ user.username|upper }}</b><span>•</span>
+    <b>FIND YOUR SQUAD TODAY</b><span>•</span>
+    <b>🏏 CRICKET</b><span>•</span><b>⚽ FOOTBALL</b><span>•</span>
+    <b>🔫 BGMI</b><span>•</span><b>🤼 KABADDI</b><span>•</span>
+    <b>WELCOME BACK, {{ user.username|upper }}</b><span>•</span>
+    <b>FIND YOUR SQUAD TODAY</b><span>•</span>
+    <b>🏏 CRICKET</b><span>•</span><b>⚽ FOOTBALL</b><span>•</span>
+    <b>🔫 BGMI</b><span>•</span><b>🤼 KABADDI</b><span>•</span>
+    {% else %}
+    <b>INDIA'S SPORTS COMMUNITY</b><span>•</span>
+    <b>🏏 CRICKET</b><span>•</span><b>⚽ FOOTBALL</b><span>•</span>
+    <b>🔫 BGMI</b><span>•</span><b>🤼 KABADDI</b><span>•</span>
+    <a href="{% url 'register' %}"><b>JOIN FREE →</b></a><span>•</span>
+    <b>INDIA'S SPORTS COMMUNITY</b><span>•</span>
+    <b>🏏 CRICKET</b><span>•</span><b>⚽ FOOTBALL</b><span>•</span>
+    <b>🔫 BGMI</b><span>•</span><b>🤼 KABADDI</b><span>•</span>
+    <a href="{% url 'register' %}"><b>JOIN FREE →</b></a><span>•</span>
+    {% endif %}
+  </div>
+</div>
+
+<!-- ALERTS -->
+<div class="p1-page-top">
+{% for message in messages %}
+<div class="container mt-3">
+  <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}success{% endif %} alert-dismissible fade show">
+    {{ message }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" style="filter:invert(1);opacity:.5"></button>
+  </div>
+</div>
+{% endfor %}
+</div>
+
+{% block content %}{% endblock %}
+
+<!-- FOOTER -->
+<footer class="p1-footer">
+  <div class="p1-footer-tagline">
+    ALWAYS<br>FINDING<br>THE <em>SQUAD.</em>
+  </div>
+
+  <div class="p1-footer-grid">
+    <div>
+      <span class="p1-footer-col-title">Player One</span>
+      <p class="p1-footer-desc">India's community platform for finding players — outdoor sports or online gaming, anytime, anywhere.</p>
+      <div style="margin-top:1.25rem">
+        {% if user.is_authenticated %}
+        <a href="{% url 'create_post' %}" class="btn-p1" style="font-size:.95rem;padding:.6rem 1.4rem">+ Post a Game</a>
+        {% else %}
+        <a href="{% url 'register' %}" class="btn-p1" style="font-size:.95rem;padding:.6rem 1.4rem">Join Free →</a>
+        {% endif %}
+      </div>
+    </div>
+    <div>
+      <span class="p1-footer-col-title">Navigate</span>
+      <a href="{% url 'home' %}" class="p1-footer-link">Home</a>
+      <a href="{% url 'venues_home' %}" class="p1-footer-link">Venues</a>
+      <a href="{% url 'search_players' %}" class="p1-footer-link">Find Players</a>
+      <a href="{% url 'map_view' %}" class="p1-footer-link">Map View</a>
+    </div>
+    <div>
+      <span class="p1-footer-col-title">Account</span>
+      {% if user.is_authenticated %}
+      <a href="{% url 'player_profile' user.username %}" class="p1-footer-link">Profile</a>
+      <a href="{% url 'my_posts' %}" class="p1-footer-link">My Posts</a>
+      <a href="{% url 'notifications' %}" class="p1-footer-link">Notifications</a>
+      <a href="{% url 'edit_profile' %}" class="p1-footer-link">Edit Profile</a>
+      {% else %}
+      <a href="{% url 'register' %}" class="p1-footer-link">Join Free</a>
+      <a href="{% url 'login' %}" class="p1-footer-link">Login</a>
+      <a href="{% url 'password_reset' %}" class="p1-footer-link">Forgot Password</a>
+      {% endif %}
+    </div>
+    <div>
+      <span class="p1-footer-col-title">Sports</span>
+      <a href="{% url 'home' %}?sport=cricket" class="p1-footer-link">Cricket</a>
+      <a href="{% url 'home' %}?sport=football" class="p1-footer-link">Football</a>
+      <a href="{% url 'home' %}?sport=bgmi" class="p1-footer-link">BGMI</a>
+      <a href="{% url 'home' %}?sport=kabaddi" class="p1-footer-link">Kabaddi</a>
+    </div>
+  </div>
+
+  <div class="p1-footer-bottom">
+    <span>© 2025 Player One · Made in India 🇮🇳</span>
+    <span>Find Your Squad · Online or On the Ground</span>
+  </div>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+/* ═══ MAGNETIC CURSOR (from friend's design) ═══ */
+(function(){
+  const dot=document.getElementById('cur-dot');
+  const ring=document.getElementById('cur-ring');
+  const label=document.getElementById('cur-label');
+  const body=document.body;
+  let mx=0,my=0,rx=0,ry=0,lx=0,ly=0;
+  const RS=.18, LS=.12;
+  let isMag=false, magEl=null;
+
+  document.addEventListener('mousemove',e=>{
+    mx=e.clientX; my=e.clientY;
+    dot.style.left=mx+'px'; dot.style.top=my+'px';
+  });
+  document.addEventListener('mousedown',()=>body.classList.add('cur-click'));
+  document.addEventListener('mouseup',()=>body.classList.remove('cur-click'));
+  document.addEventListener('mouseleave',()=>body.classList.add('cur-hidden'));
+  document.addEventListener('mouseenter',()=>body.classList.remove('cur-hidden'));
+
+  const MSEL=['a','button','.btn-p1','.btn-p1-outline','.btn-ghost','.nav-cta'];
+  const TSEL=['input','textarea','select'];
+
+  function attach(){
+    document.querySelectorAll(MSEL.join(',')).forEach(el=>{
+      if(el._ca) return; el._ca=true;
+      const lbl=(el.textContent||'').trim().slice(0,14).toUpperCase();
+      el.addEventListener('mouseenter',()=>{isMag=true;magEl=el;body.classList.add('cur-magnetic');label.textContent=lbl;sizeRing(el)});
+      el.addEventListener('mouseleave',()=>{isMag=false;magEl=null;body.classList.remove('cur-magnetic');ring.style.width='';ring.style.height='';ring.style.borderRadius='';el.style.transition='transform .5s cubic-bezier(.22,1,.36,1)';el.style.transform='translate(0,0)';setTimeout(()=>el.style.transition='',500)});
+      el.addEventListener('mousemove',e=>{if(!isMag)return;const r=el.getBoundingClientRect();const dx=(e.clientX-r.left-r.width/2)*.22;const dy=(e.clientY-r.top-r.height/2)*.22;el.style.transform=`translate(${dx}px,${dy}px)`});
+    });
+    document.querySelectorAll(TSEL.join(',')).forEach(el=>{
+      if(el._ct) return; el._ct=true;
+      el.addEventListener('mouseenter',()=>body.classList.add('cur-text'));
+      el.addEventListener('mouseleave',()=>body.classList.remove('cur-text'));
+    });
+  }
+  function sizeRing(el){const r=el.getBoundingClientRect();ring.style.width=(r.width+10)+'px';ring.style.height=(r.height+10)+'px';ring.style.borderRadius='4px'}
+  function animate(){
+    let tx=mx,ty=my;
+    if(isMag&&magEl){const r=magEl.getBoundingClientRect();tx=r.left+r.width/2;ty=r.top+r.height/2;sizeRing(magEl)}
+    rx+=(tx-rx)*RS; ry+=(ty-ry)*RS;
+    ring.style.left=rx+'px'; ring.style.top=ry+'px';
+    lx+=(rx-lx)*LS; ly+=(ry-ly)*LS;
+    label.style.left=lx+'px'; label.style.top=ly+'px';
+    requestAnimationFrame(animate);
+  }
+  if(window.matchMedia('(min-width:901px)').matches){
+    animate();
+    new MutationObserver(attach).observe(document.body,{childList:true,subtree:true});
+    attach();
+  }
+})();
+</script>
+{% block extra_js %}{% endblock %}
 </body>
 </html>
