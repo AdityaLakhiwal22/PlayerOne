@@ -2,8 +2,7 @@
 {% block title %}{{ post.title }} — PlayerOne{% endblock %}
 {% block nav_home %}active-nav{% endblock %}
 
-{% block content %}
-<div style="max-width:1400px;margin:0 auto;padding:2rem 3rem 0">
+{% block content %}<div style="max-width:1400px;margin:0 auto;padding:2rem 3rem 0">
   <div class="section-eyebrow">
     <a href="{% url 'home' %}" style="color:var(--lime)">Home</a> / {{ post.get_sport_display }} / {{ post.title }}
   </div>

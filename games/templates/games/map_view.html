@@ -1,119 +1,97 @@
 {% extends 'base.html' %}
-{% block title %}Map — Player One{% endblock %}
+{% block title %}Map — PlayerOne{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h3 style="color:#00ff87;" class="mb-0">🗺️ Games Near You</h3>
-    <span style="color:#888;" class="small">{{ posts.count }} outdoor game{{ posts.count|pluralize }} open</span>
-</div>
+<div style="max-width:1400px;margin:0 auto;padding:3rem">
+  <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:1.5rem">
+    <div class="section-title" style="margin-bottom:0">🗺️ GAMES <span class="dim">NEAR YOU</span></div>
+    <span style="color:var(--text2);font-size:.78rem">{{ posts.count }} outdoor game{{ posts.count|pluralize }} open</span>
+  </div>
 
-<!-- Map -->
-<div class="card p-0 mb-4" style="overflow:hidden;border-radius:12px;">
-    <div id="map" style="height:480px;width:100%;"></div>
-</div>
+  <!-- MAP -->
+  <div style="border:1px solid var(--border);margin-bottom:2.5rem;overflow:hidden">
+    <div id="map" style="height:480px;width:100%"></div>
+  </div>
 
-<!-- Post list below map -->
-{% if posts %}
-<h5 style="color:#fff;" class="mb-3">All Outdoor Posts</h5>
-<div class="row g-3">
+  <!-- POST LIST -->
+  {% if posts %}
+  <div class="section-eyebrow">All Outdoor Posts</div>
+  <div class="section-title" style="font-size:2rem;margin-bottom:1.25rem">OPEN <span class="dim">GAMES</span></div>
+
+  <div class="results-list">
     {% for post in posts %}
-    <div class="col-md-6">
-        <div class="card p-3">
-            <div class="d-flex justify-content-between">
-                <span class="sport-tag" style="color:#fff;">{{ post.get_sport_display }}</span>
-                <span style="color:#00ff87;" class="small">{{ post.get_skill_level_display }}</span>
-            </div>
-            <h6 style="color:#fff;" class="mt-2 mb-1">{{ post.title }}</h6>
-            <p style="color:#888;" class="small mb-2">
-                📍 {{ post.location }}{% if post.city %}, {{ post.city }}{% endif %}
-                {% if post.play_date %} · 📅 {{ post.play_date }}{% endif %}
-            </p>
-            <div class="d-flex justify-content-between align-items-center">
-                <span style="color:#aaa;" class="small">👥 Need {{ post.spots_left }} more · by {{ post.posted_by.username }}</span>
-                <a href="{% url 'post_detail' post.pk %}" class="btn btn-p1 btn-sm">View →</a>
-            </div>
+    <a href="{% url 'post_detail' post.pk %}" class="result-row" style="text-decoration:none">
+      <div class="result-avatar">🏏</div>
+      <div class="result-info">
+        <div class="result-name">{{ post.title }}</div>
+        <div class="result-detail">
+          📍 {{ post.location }}{% if post.city %}, {{ post.city }}{% endif %}
+          {% if post.play_date %} · 📅 {{ post.play_date }}{% endif %}
+          · by {{ post.posted_by.username }}
         </div>
-    </div>
+      </div>
+      <span class="result-badge {{ post.sport }}">{{ post.get_sport_display }}</span>
+      <div style="font-size:.78rem;color:var(--lime);font-family:'DM Mono',monospace">Need {{ post.spots_left }}</div>
+    </a>
     {% endfor %}
+  </div>
+  {% else %}
+  <div style="background:var(--dark2);border:1px solid var(--border);padding:3rem;text-align:center">
+    <p style="color:var(--text2)">No outdoor games posted yet. <a href="{% url 'create_post' %}" style="color:var(--lime)">Post one!</a></p>
+  </div>
+  {% endif %}
 </div>
-{% else %}
-<div class="card p-4 text-center">
-    <p style="color:#888;">No outdoor games posted yet. <a href="{% url 'create_post' %}" style="color:#00ff87;">Post one!</a></p>
-</div>
-{% endif %}
 
-<!-- Leaflet CSS & JS -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
 <script>
-// Init map centered on India
 const map = L.map('map').setView([20.5937, 78.9629], 5);
 
-// Free map tiles from OpenStreetMap
 L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
     attribution: '© OpenStreetMap © CARTO'
 }).addTo(map);
 
-// Custom green marker
 const greenIcon = L.divIcon({
-    html: '<div style="background:#00ff87;width:14px;height:14px;border-radius:50%;border:2px solid #000;"></div>',
+    html: '<div style="background:#C8FF00;width:14px;height:14px;border-radius:50%;border:2px solid #000;"></div>',
     iconSize: [14, 14],
     className: ''
 });
 
-// Post data from Django
 const posts = {{ map_data_json|safe }};
 
-// City coordinates lookup (Indian cities)
 const cityCoords = {
-    'mumbai': [19.0760, 72.8777],
-    'delhi': [28.6139, 77.2090],
-    'bangalore': [12.9716, 77.5946],
-    'bengaluru': [12.9716, 77.5946],
-    'hyderabad': [17.3850, 78.4867],
-    'chennai': [13.0827, 80.2707],
-    'kolkata': [22.5726, 88.3639],
-    'pune': [18.5204, 73.8567],
-    'ahmedabad': [23.0225, 72.5714],
-    'jaipur': [26.9124, 75.7873],
-    'surat': [21.1702, 72.8311],
-    'lucknow': [26.8467, 80.9462],
-    'nagpur': [21.1458, 79.0882],
-    'indore': [22.7196, 75.8577],
-    'bhopal': [23.2599, 77.4126],
-    'patna': [25.5941, 85.1376],
-    'vadodara': [22.3072, 73.1812],
-    'goa': [15.2993, 74.1240],
-    'nashik': [19.9975, 73.7898],
-    'aurangabad': [19.8762, 75.3433],
+    'mumbai': [19.0760, 72.8777], 'delhi': [28.6139, 77.2090],
+    'bangalore': [12.9716, 77.5946], 'bengaluru': [12.9716, 77.5946],
+    'hyderabad': [17.3850, 78.4867], 'chennai': [13.0827, 80.2707],
+    'kolkata': [22.5726, 88.3639], 'pune': [18.5204, 73.8567],
+    'ahmedabad': [23.0225, 72.5714], 'jaipur': [26.9124, 75.7873],
+    'surat': [21.1702, 72.8311], 'lucknow': [26.8467, 80.9462],
+    'nagpur': [21.1458, 79.0882], 'indore': [22.7196, 75.8577],
+    'bhopal': [23.2599, 77.4126], 'patna': [25.5941, 85.1376],
+    'vadodara': [22.3072, 73.1812], 'goa': [15.2993, 74.1240],
+    'nashik': [19.9975, 73.7898], 'aurangabad': [19.8762, 75.3433],
 };
 
-// Add markers
 posts.forEach(post => {
     const cityKey = post.city.toLowerCase().trim();
     const coords = cityCoords[cityKey];
-
     if (coords) {
-        // Add small random offset so posts in same city don't overlap
         const lat = coords[0] + (Math.random() - 0.5) * 0.05;
         const lng = coords[1] + (Math.random() - 0.5) * 0.05;
-
         const marker = L.marker([lat, lng], {icon: greenIcon}).addTo(map);
         marker.bindPopup(`
-            <div style="min-width:180px;">
+            <div style="min-width:180px;font-family:'DM Sans',sans-serif;">
                 <strong>${post.sport}</strong><br>
                 <b>${post.title}</b><br>
                 📍 ${post.location}, ${post.city}<br>
                 ${post.date ? '📅 ' + post.date + '<br>' : ''}
                 👥 Need ${post.players_needed} more · ${post.skill}<br>
-                <a href="${post.url}" style="color:#00aa55;font-weight:bold;">View Post →</a>
+                <a href="${post.url}" style="color:#9fcc00;font-weight:bold;">View Post →</a>
             </div>
         `);
     }
 });
 
-// Try to get user location
 if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(pos => {
         const lat = pos.coords.latitude;

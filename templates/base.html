@@ -359,6 +359,41 @@ select.form-input option{background:var(--dark3)}
 
 /* Notification badge */
 .notif-badge{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;background:var(--red);color:#fff;border-radius:50%;font-size:.6rem;font-weight:700;margin-left:.35rem;flex-shrink:0}
+
+/* ── CSS Bridge: Django form widgets → friend's dark input style ── */
+.form-control,.form-select{
+  width:100%;background:var(--dark3);border:1px solid var(--border);
+  color:var(--text);padding:.65rem 1rem;border-radius:2px;
+  font-family:'DM Sans',sans-serif;font-size:.9rem;
+  outline:none;transition:border-color .2s;appearance:auto;
+}
+.form-control,.form-select{
+  width:100%;
+  background:#111111 !important;
+  border:1px solid rgba(255,255,255,0.08) !important;
+  color:var(--text) !important;
+  padding:.65rem 1rem;
+  border-radius:2px;
+  font-family:'DM Sans',sans-serif;
+  font-size:.9rem;
+  outline:none !important;
+  transition:border-color .2s;
+  appearance:auto;
+  box-shadow:none !important;
+}
+.form-control:focus,.form-select:focus{
+  border-color:var(--lime) !important;
+  background:#1a1a1a !important;
+  box-shadow:none !important;
+  outline:none !important;
+}
+.form-control::placeholder{color:var(--muted) !important}
+textarea.form-control{resize:vertical;min-height:90px}
+.form-control::placeholder{color:var(--muted)}
+textarea.form-control{resize:vertical;min-height:90px}
+select.form-control,select.form-select{padding-right:2rem}
+.form-control[type="file"]{padding:.4rem .75rem;color:var(--text2)}
+
 </style>
 
 /* ── extra: page-content top spacing since pages aren't JS tab-toggled anymore ── */
