@@ -385,8 +385,9 @@ select.form-input option{background:var(--dark3)}
   border-color:var(--lime) !important;
   background:#1a1a1a !important;
   box-shadow:none !important;
-  outline:none !important;
+  outline:none !important;<a href="{% url 'register' %}" class="nav-cta">Get Started</a>
 }
+
 .form-control::placeholder{color:var(--muted) !important}
 textarea.form-control{resize:vertical;min-height:90px}
 .form-control::placeholder{color:var(--muted)}
@@ -399,7 +400,7 @@ select.form-control,select.form-select{padding-right:2rem}
 /* ── extra: page-content top spacing since pages aren't JS tab-toggled anymore ── */
 .p1-page{padding-top:0}
 .p1-page-content{margin-top:92px}
-</style>
+
 </head>
 <body>
 
@@ -417,11 +418,11 @@ select.form-control,select.form-select{padding-right:2rem}
     {% if user.is_authenticated %}
     <a href="{% url 'search_players' %}" class="{% block nav_players %}{% endblock %}">Players</a>
     <a href="{% url 'notifications' %}" style="position:relative">🔔{% if unread_count %}<span class="notif-badge">{{ unread_count }}</span>{% endif %}</a>
-    <a href="{% url 'create_post' %}">Post Game</a>
+    <a href="{% url 'create_post' %}">+ Post</a>
     {% endif %}
   </div>
   {% if user.is_authenticated %}
-  <a href="{% url 'create_post' %}" class="nav-cta">+ Post a Game</a>
+  <a href="{% url 'player_profile' user.username %}" class="nav-cta" style="background:transparent;border:1px solid var(--lime);color:var(--lime)">👤 {{ user.username }}</a>
   {% else %}
   <a href="{% url 'register' %}" class="nav-cta">Get Started</a>
   {% endif %}
