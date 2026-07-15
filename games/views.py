@@ -345,12 +345,14 @@ def map_view(request):
         'map_data_json': json.dumps(map_data),
     })
 
+
 def venues_home(request):
-    cities = Venue.objects.values_list('city', flat=True).distinct().order_by('city')
-    total_venues = Venue.objects.count()
-    grounds = Venue.objects.filter(venue_type='ground').count()
-    turfs = Venue.objects.filter(venue_type='turf').count()
-    all_venues = Venue.objects.all()
+    cities = Venue.objects.filter(is_verified=True).values_list('city', flat=True).distinct().order_by('city')
+    total_venues = Venue.objects.filter(is_verified=True).count()
+    venues = Venue.objects.filter(is_verified=True)
+    grounds = Venue.objects.filter(venue_type='ground', is_verified=True).count()
+    turfs = Venue.objects.filter(venue_type='turf', is_verified=True).count()
+    all_venues = Venue.objects.filter(is_verified=True)
 
     venues_map_data = []
     for v in all_venues:
@@ -378,10 +380,10 @@ def venues_home(request):
 
 def venues_city(request, city):
     areas = Venue.objects.filter(
-        city__iexact=city
+        city__iexact=city, is_verified=True
     ).values_list('area', flat=True).distinct().order_by('area')
-    grounds_count = Venue.objects.filter(city__iexact=city, venue_type='ground').count()
-    turfs_count = Venue.objects.filter(city__iexact=city, venue_type='turf').count()
+    grounds_count = Venue.objects.filter(city__iexact=city, venue_type='ground', is_verified=True).count()
+    turfs_count = Venue.objects.filter(city__iexact=city, venue_type='turf', is_verified=True).count()
     return render(request, 'games/venues_city.html', {
         'city': city,
         'areas': areas,
@@ -392,7 +394,7 @@ def venues_city(request, city):
 
 def venues_area(request, city, area):
     venue_type = request.GET.get('type', '')
-    venues = Venue.objects.filter(city__iexact=city, area__iexact=area)
+    venues = Venue.objects.filter(city__iexact=city, area__iexact=area, is_verified=True)
     if venue_type:
         venues = venues.filter(venue_type=venue_type)
     grounds = venues.filter(venue_type='ground')
