@@ -1,0 +1,1 @@
+web: gunicorn player_one.wsgi
