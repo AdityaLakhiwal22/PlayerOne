@@ -97,3 +97,4 @@ DEFAULT_FROM_EMAIL = f'Player One <{config("EMAIL_HOST_USER")}>'
 
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+CSRF_TRUSTED_ORIGINS = ['https://playerone-production.up.railway.app']
