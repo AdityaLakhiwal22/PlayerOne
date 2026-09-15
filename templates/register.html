@@ -2,44 +2,35 @@
 {% block title %}Join PlayerOne{% endblock %}
 
 {% block content %}
-<style>
-/* Bridge: Django form-control/form-select widgets → friend's input look */
-.search-card .form-control, .search-card .form-select {
-  width:100%;background:var(--dark3);border:1px solid var(--border);color:var(--text);
-  padding:.65rem 1rem;border-radius:2px;font-family:'DM Sans',sans-serif;font-size:.9rem;
-  outline:none;transition:border-color .2s;margin-top:.25rem;
-}
-.search-card .form-control:focus, .search-card .form-select:focus{border-color:var(--lime)}
-</style>
-<div style="max-width:460px;margin:0 auto;padding:4rem 1.5rem">
-  <div class="search-card">
+<div style="max-width:480px;margin:0 auto;padding:4rem 1.5rem">
+  <div class="search-card" style="padding:2.5rem">
     <div class="modal-title">JOIN PLAYERONE</div>
-    <div class="modal-sub">Create your account — find players in seconds.</div>
+    <div class="modal-sub" style="margin-bottom:1.5rem">Create your account — find players in seconds.</div>
 
     <form method="post">
       {% csrf_token %}
-      <div class="form-group">
+      <div class="form-group" style="margin-bottom:1rem">
         <label class="form-label">Username</label>
         {{ form.username }}
         {% if form.username.errors %}
         <p style="color:var(--red);font-size:.75rem;margin-top:.3rem">{{ form.username.errors.0 }}</p>
         {% endif %}
       </div>
-      <div class="form-group">
+      <div class="form-group" style="margin-bottom:1rem">
         <label class="form-label">Email</label>
         {{ form.email }}
         {% if form.email.errors %}
         <p style="color:var(--red);font-size:.75rem;margin-top:.3rem">{{ form.email.errors.0 }}</p>
         {% endif %}
       </div>
-      <div class="form-group">
+      <div class="form-group" style="margin-bottom:1rem">
         <label class="form-label">Password</label>
         {{ form.password1 }}
         {% if form.password1.errors %}
         <p style="color:var(--red);font-size:.75rem;margin-top:.3rem">{{ form.password1.errors.0 }}</p>
         {% endif %}
       </div>
-      <div class="form-group">
+      <div class="form-group" style="margin-bottom:1.5rem">
         <label class="form-label">Confirm Password</label>
         {{ form.password2 }}
         {% if form.password2.errors %}
@@ -50,11 +41,9 @@
       <button type="submit" class="modal-submit">CREATE ACCOUNT →</button>
     </form>
 
-    <div class="strip" style="margin:1.5rem -2.5rem -2.5rem;border-left:none;border-right:none">
-      <div style="padding:1rem;text-align:center">
-        <span style="color:var(--text2);font-size:.85rem">Already have an account? </span>
-        <a href="{% url 'login' %}" style="color:var(--lime);font-weight:600;text-decoration:none">Login →</a>
-      </div>
+    <div style="text-align:center;margin-top:1.25rem">
+      <span style="color:var(--text2);font-size:.85rem">Already have an account? </span>
+      <a href="{% url 'login' %}" style="color:var(--lime);font-weight:600">Login →</a>
     </div>
   </div>
 </div>
